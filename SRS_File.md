@@ -119,7 +119,7 @@ c. Διαχειριστές
 3. Εξαγωγή βάσης δεδομένων SQL και scripts για την εισαγωγή ή τη δημιουργία της βάσης δεδομένων
 4. Dedicated Azure Subscription με όλα τα Services και Resources. Τα Azure Resources θα οργανωθούν σε Development, UAT και Production Resource groups 
 5. Dedicated Azure DevOps and Azure Git Repo ( free-tier ) --> 
-### Ομάδα έργου
+<!-- ### Ομάδα έργου
 
 | Μέλος Ομάδας  | Ρόλος |
 | ------------- | ------------- |
@@ -129,6 +129,6 @@ c. Διαχειριστές
 | Name  | Backend Developer  |
 | Name  |Frontend Developer  |
 | Name  | Designer  |
-| Name  | Project Coordinator  |
+| Name  | Project Coordinator  | -->
 
 	
