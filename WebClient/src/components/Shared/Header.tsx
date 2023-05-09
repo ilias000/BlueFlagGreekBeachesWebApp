@@ -6,17 +6,9 @@ import { Modal } from "@mui/base";
 import CloseIcon from "@mui/icons-material/Close";
 import Grid from "@mui/material/Grid";
 import { Backdrop } from "@mui/material";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
 import "../../css/index.css";
-
-const handleLogin = (e: React.FormEvent) => {
-  e.preventDefault();
-  console.log("sign in");
-};
-
-const handleSignUp = (e: React.FormEvent) => {
-  e.preventDefault();
-  console.log("sign up");
-};
 
 export default function Header(props: object) {
   const [open, setOpen] = React.useState(false);
@@ -50,32 +42,7 @@ export default function Header(props: object) {
       </AppBar>
       <Modal open={open} onClose={() => setOpen(false)}>
         <div>
-          {true ? (
-            <form onSubmit={handleLogin}>
-              <p>Φόρμα σύνδεσης</p>
-              <Button
-                variant="contained"
-                color="primary"
-                type="submit"
-                sx={{ textTransform: "none ! important" }}
-              >
-                Σύνδεση
-              </Button>
-            </form>
-          ) : (
-            <form onSubmit={handleSignUp}>
-              <p>Φόρμα εγγραφής</p>
-              <Button
-                variant="contained"
-                color="primary"
-                type="submit"
-                sx={{ textTransform: "none ! important" }}
-              >
-                Εγγραφή
-              </Button>
-            </form>
-          )}
-
+          {true ? <SignIn /> : <SignUp />}
           <Button onClick={() => setOpen(false)}>
             <CloseIcon></CloseIcon>
           </Button>
