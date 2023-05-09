@@ -35,13 +35,14 @@ export default function Places({ setSelected, map }: PlacesProps) {
   const handleInput = React.useCallback(
     (e: React.FormEvent, value: string | null) => {
       if (!value) return;
+      if (!map) return;
       clearSuggestions();
       getGeocode({ address: value, componentRestrictions: { country: "gr" } })
         .then((results) => {
           const { lat, lng } = getLatLng(results[0]);
           setSelected(new google.maps.LatLng(lat, lng));
-          map?.setZoom(13);
-          map?.panTo({ lat, lng });
+          map.setZoom(13);
+          map.panTo({ lat, lng });
         })
         .catch((reason) => {
           console.log("reasong" + reason);

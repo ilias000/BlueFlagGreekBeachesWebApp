@@ -9,6 +9,7 @@ export default function Map() {
   const [map, setMap] = React.useState<google.maps.Map>();
   const [circle, setCircle] = React.useState<google.maps.Circle>();
   const [radius, setRadius] = React.useState(1500.0);
+  const [mapLoaded, setMapLoaded] = React.useState(false);
 
   const hiddenMap = React.useMemo(() => false, []);
   const initcenter = React.useMemo(() => ({ lat: 39.0, lng: 23.5 }), []);
@@ -38,13 +39,14 @@ export default function Map() {
   }, []);
 
   const findMyLocation = React.useCallback((setSelected: any) => {
+    if (!map) return;
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         setSelected({ lat, lng });
-        map?.setZoom(13);
-        map?.panTo({ lat, lng });
+        map.setZoom(13);
+        map.panTo({ lat, lng });
       },
       (error) => {
         console.error(error);
@@ -71,11 +73,14 @@ export default function Map() {
             center={initcenter}
             zoom={8}
             options={options}
-            onLoad={(map) => setMap(map)}
+            onLoad={(map) => {
+              setMap(map);
+              setMapLoaded(true);
+            }}
           >
             <Places setSelected={setSelected} map={map}></Places>
 
-            {selected && (
+            {mapLoaded && selected && (
               <>
                 <Circle
                   onLoad={(circle) => setCircle(circle)}
