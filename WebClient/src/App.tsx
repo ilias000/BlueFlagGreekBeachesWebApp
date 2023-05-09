@@ -4,8 +4,7 @@ import Admin from "./components/Admin/Admin";
 import Home from "./components/Home/Home";
 import Notifications from "./components/Notifications/Notifications";
 import NotFound from "./components/Shared/NotFound";
-import Header from "./components/Shared/Header";
-import Footer from "./components/Shared/Footer";
+import { AuthProvider } from "./components/Shared/Auth";
 
 const AppRouter = createBrowserRouter([
   {
@@ -29,7 +28,9 @@ const AppRouter = createBrowserRouter([
 export default function App() {
   return (
     <>
-      <RouterProvider router={AppRouter} />
+      <AuthProvider>
+        <RouterProvider router={AppRouter} />
+      </AuthProvider>
     </>
   );
 }

@@ -1,21 +1,19 @@
 import React from "react";
 import { Button } from "@mui/material";
-
-const handleLogin = (e: React.FormEvent) => {
-  e.preventDefault();
-  console.log("sign in");
-};
+import AuthContext from "./Auth";
 
 export default function SingIn() {
+  const { LoginUser } = React.useContext(AuthContext);
+
   return (
     <>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={LoginUser}>
         <p>Φόρμα σύνδεσης</p>
         <Button
           variant="contained"
           color="primary"
           type="submit"
-          sx={{ textTransform: "none ! important" }}
+          sx={{ textTransform: "none !important" }}
         >
           Σύνδεση
         </Button>

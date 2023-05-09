@@ -8,41 +8,56 @@ import Grid from "@mui/material/Grid";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import { Link } from "react-router-dom";
-import "../../css/index.css";
+import AuthContext from "./Auth";
 import Typography from "@mui/material/Typography";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import "../../css/index.css";
 
 export default function Header(props: any) {
   const [open, setOpen] = React.useState(false);
+
+  const { AuthData } = React.useContext(AuthContext);
 
   return (
     <>
       <AppBar position="fixed" sx={{ backgroundColor: "var(--primary-color)" }}>
         <Toolbar>
           <Grid container columnGap={3} justifyContent="flex-end">
-            <Grid>
-              <Link to={"/"} onClick={() => props.setIsSearch(true)}>
+            {AuthData.isLoggedIn ? (
+              <Grid>
                 <Typography variant="body1" color="white">
-                  Αναζήτηση
+                  {AuthData.username}
                 </Typography>
-              </Link>
-            </Grid>
-            <Grid>
-              <Button
-                onClick={() => setOpen(true)}
-                variant="contained"
-                sx={{
-                  color: "var(--on-primary-container)",
-                  backgroundColor: "var(--primary-container)",
-                  ":hover": {
-                    color: "var(--on-secondary)",
-                    backgroundColor: "var(--secondary)",
-                  },
-                  textTransform: "none !important",
-                }}
-              >
-                Σύνδεση
-              </Button>
-            </Grid>
+                <AccountCircleIcon></AccountCircleIcon>
+              </Grid>
+            ) : (
+              <>
+                <Grid>
+                  <Link to={"/"} onClick={() => props.setIsSearch(true)}>
+                    <Typography variant="body1" color="white">
+                      Αναζήτηση
+                    </Typography>
+                  </Link>
+                </Grid>
+                <Grid>
+                  <Button
+                    onClick={() => setOpen(true)}
+                    variant="contained"
+                    sx={{
+                      color: "var(--on-primary-container)",
+                      backgroundColor: "var(--primary-container)",
+                      ":hover": {
+                        color: "var(--on-secondary)",
+                        backgroundColor: "var(--secondary)",
+                      },
+                      textTransform: "none !important",
+                    }}
+                  >
+                    Σύνδεση
+                  </Button>
+                </Grid>
+              </>
+            )}
           </Grid>
         </Toolbar>
       </AppBar>
