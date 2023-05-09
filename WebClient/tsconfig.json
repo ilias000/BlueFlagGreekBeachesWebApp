@@ -16,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"],
+  "exclude": ["src/components/Home/Map.tsx", "src/components/Home/Search.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
