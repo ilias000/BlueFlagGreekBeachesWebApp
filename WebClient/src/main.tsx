@@ -3,11 +3,9 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./css/index.css";
 
-const debug = true; // if true, components render twice to find errors
-
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <>
-    {debug ? (
+    {import.meta.env.VITE_DEBUG === "true" ? (
       <React.StrictMode>
         <App />
       </React.StrictMode>
