@@ -20,6 +20,14 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  /* my variables */
+  --primary-color: #4355B9;
+  --on-primary-color: white;
+  --primary-container: #DEE0FF;
+  --on-primary-container: #00105C;
+  --secondary: #5B5D72;
+  --on-secondary: white;
 }
 
 a {
