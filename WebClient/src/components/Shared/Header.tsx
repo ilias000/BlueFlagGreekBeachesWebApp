@@ -11,28 +11,55 @@ import { Link } from "react-router-dom";
 import AuthContext from "./Auth";
 import Typography from "@mui/material/Typography";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { Box } from "@mui/material";
 import "../../css/index.css";
 
 export default function Header(props: any) {
   const [open, setOpen] = React.useState(false);
 
-  const { AuthData } = React.useContext(AuthContext);
+  const { AuthData, LogoutUser } = React.useContext(AuthContext);
 
   return (
     <>
       <AppBar position="fixed" sx={{ backgroundColor: "var(--primary-color)" }}>
         <Toolbar>
+          <Grid container justifyContent="flex-start">
+            <Link to={"/"}>
+              <Grid>
+                <Box
+                  sx={{
+                    height: "2.5rem",
+                    width: "7rem",
+                    backgroundColor: "var(--primary-container)",
+                  }}
+                ></Box>
+              </Grid>
+            </Link>
+          </Grid>
           <Grid container columnGap={3} justifyContent="flex-end">
             {AuthData.isLoggedIn ? (
-              <Grid>
-                <Typography variant="body1" color="white">
-                  {AuthData.username}
-                </Typography>
-                <AccountCircleIcon></AccountCircleIcon>
-              </Grid>
+              <>
+                <Grid container columnGap={1} justifyContent="flex-end">
+                  <Grid display="flex" alignItems="center">
+                    <Box>
+                      <Typography variant="body1" color="white">
+                        {AuthData.username}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid display="flex" alignItems="center">
+                    <button
+                      onClick={LogoutUser}
+                      style={{ backgroundColor: "inherit" }}
+                    >
+                      <AccountCircleIcon></AccountCircleIcon>
+                    </button>
+                  </Grid>
+                </Grid>
+              </>
             ) : (
               <>
-                <Grid>
+                <Grid display="flex" alignItems="center">
                   <Link to={"/"} onClick={() => props.setIsSearch(true)}>
                     <Typography variant="body1" color="white">
                       Αναζήτηση
