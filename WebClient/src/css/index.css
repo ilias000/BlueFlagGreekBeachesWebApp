@@ -1,8 +1,10 @@
-:root {
+#root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
+  height: 100%;
+  width: 100%;
   background-color: rgb(255, 255, 255) !important;
   color: rgb(34, 33, 33) !important;
 
@@ -21,7 +23,6 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  /* my variables */
   --primary-color: #4355B9;
   --on-primary-color: white;
   --primary-container: #DEE0FF;

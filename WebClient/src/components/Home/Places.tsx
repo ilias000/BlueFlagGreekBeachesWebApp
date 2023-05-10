@@ -34,8 +34,12 @@ export default function Places({ setSelected, map }: PlacesProps) {
 
   const handleInput = React.useCallback(
     (e: React.FormEvent, value: string | null) => {
-      if (!value) return;
-      if (!map) return;
+      if (!map || !value) {
+        console.error(
+          "Unexpected error: cannot display location of place since map or name of place is undefined"
+        );
+        return;
+      }
       clearSuggestions();
       getGeocode({ address: value, componentRestrictions: { country: "gr" } })
         .then((results) => {

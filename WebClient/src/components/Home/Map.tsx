@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { GoogleMap, Circle } from "@react-google-maps/api";
+import { GoogleMap, Circle, useJsApiLoader } from "@react-google-maps/api";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import Places from "./Places";
 
@@ -11,7 +11,6 @@ export default function Map() {
   const [radius, setRadius] = React.useState(1500.0);
   const [mapLoaded, setMapLoaded] = React.useState(false);
 
-  const hiddenMap = React.useMemo(() => false, []);
   const initcenter = React.useMemo(() => ({ lat: 39.0, lng: 23.5 }), []);
   const options = React.useMemo(
     () => ({
@@ -38,8 +37,12 @@ export default function Map() {
     setSelected(circle.getCenter());
   }, []);
 
-  const findMyLocation = React.useCallback((setSelected: any) => {
-    if (!map) return;
+  const findMyLocation = React.useCallback((setSelected: any, map: any) => {
+    if (!map) {
+      console.error(
+        "unexpected error: Cannot display location since map is undefined"
+      );
+    }
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const lat = position.coords.latitude;
@@ -56,7 +59,7 @@ export default function Map() {
 
   return (
     <>
-      {hiddenMap ? null : (
+      {import.meta.env.VITE_HIDDEN_MAP === "true" ? null : (
         <Grid
           container
           spacing={0}
@@ -78,30 +81,33 @@ export default function Map() {
               setMapLoaded(true);
             }}
           >
-            <Places setSelected={setSelected} map={map}></Places>
-
-            {mapLoaded && selected && (
+            {mapLoaded && (
               <>
-                <Circle
-                  onLoad={(circle) => setCircle(circle)}
-                  center={selected}
-                  radius={radius}
-                  editable={true}
-                  onRadiusChanged={handleRadiusChange}
-                  onCenterChanged={handleCenterChange}
-                />
+                <Places setSelected={setSelected} map={map}></Places>
+                <button onClick={() => findMyLocation(setSelected, map)}>
+                  <MyLocationIcon
+                    sx={{
+                      position: "absolute",
+                      right: "1.1rem",
+                      bottom: "7.5rem",
+                      color: "black",
+                    }}
+                  />
+                </button>
+                {selected && (
+                  <>
+                    <Circle
+                      onLoad={(circle) => setCircle(circle)}
+                      center={selected}
+                      radius={radius}
+                      editable={true}
+                      onRadiusChanged={handleRadiusChange}
+                      onCenterChanged={handleCenterChange}
+                    />
+                  </>
+                )}
               </>
             )}
-            <button onClick={() => findMyLocation(setSelected)}>
-              <MyLocationIcon
-                sx={{
-                  position: "absolute",
-                  right: "1.1rem",
-                  bottom: "7.5rem",
-                  color: "black",
-                }}
-              />
-            </button>
           </GoogleMap>
         </Grid>
       )}
