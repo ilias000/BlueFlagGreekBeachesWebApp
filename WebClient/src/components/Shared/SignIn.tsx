@@ -2,12 +2,25 @@ import React from "react";
 import { Button } from "@mui/material";
 import AuthContext from "./Auth";
 
-export default function SingIn() {
+interface PropsSignIn {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function SingIn(props: PropsSignIn) {
   const { LoginUser } = React.useContext(AuthContext);
+
+  const handleSubmit = React.useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      LoginUser(e);
+      props.setOpen(false);
+    },
+    []
+  );
 
   return (
     <>
-      <form onSubmit={LoginUser}>
+      <form onSubmit={handleSubmit}>
         <p>Φόρμα σύνδεσης</p>
         <Button
           variant="contained"

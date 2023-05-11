@@ -1,14 +1,22 @@
 import React from "react";
 import { Button } from "@mui/material";
 
-const handleSignUp = (e: React.FormEvent) => {
-  e.preventDefault();
-  console.log("sign up");
-};
+interface PropsSignUp {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-export default function SignUp() {
+export default function SignUp(props: PropsSignUp) {
+  const handleSubmit = React.useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      // axios call to register api endpoint
+      props.setOpen(false);
+    },
+    []
+  );
+
   return (
-    <form onSubmit={handleSignUp}>
+    <form onSubmit={handleSubmit}>
       <p>Φόρμα εγγραφής</p>
       <Button
         variant="contained"
