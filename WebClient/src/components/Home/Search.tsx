@@ -12,47 +12,56 @@ import AuthContext from "../Shared/Auth";
 const district = [{ label: "Αττικής" }, { label: "Θεσσαλονίκης" }];
 const municipality = [{ label: "Αθηναίων" }, { label: "Ζωγράφου" }];
 
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  console.log("submit");
+};
+
 export default function Search() {
   const { AuthData } = React.useContext(AuthContext);
 
   return (
     <>
-      <Grid container columnGap={5} mt={3} mb={3}>
-        <Grid>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={district}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Νομός" />}
-          />
+      <form onSubmit={handleSubmit}>
+        <Grid container columnGap={5} mt={3} mb={3}>
+          <Grid>
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={district}
+              sx={{ width: 300 }}
+              renderInput={(params) => <TextField {...params} label="Νομός" />}
+            />
+          </Grid>
+          <Grid>
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={municipality}
+              sx={{ width: 300 }}
+              renderInput={(params) => <TextField {...params} label="Δήμος" />}
+            />
+          </Grid>
+          <Grid>
+            <TextField label="λέξεις-κλειδιά" variant="outlined" />
+          </Grid>
+          <Grid>
+            <Button
+              type="submit"
+              variant="text"
+              sx={{ BackgroundColor: "var(--primary-color)" }}
+            >
+              Αναζήτηση
+            </Button>
+            {AuthData.isLoggedIn && (
+              <FormGroup>
+                <FormControlLabel control={<Checkbox />} label="Αποθήκευση" />
+              </FormGroup>
+            )}
+          </Grid>
         </Grid>
-        <Grid>
-          <Autocomplete
-            disablePortal
-            id="combo-box-demo"
-            options={municipality}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="Δήμος" />}
-          />
-        </Grid>
-        <Grid>
-          <TextField label="λέξεις-κλειδιά" variant="outlined" />
-        </Grid>
-        <Grid>
-          <Button
-            variant="text"
-            sx={{ BackgroundColor: "var(--primary-color)" }}
-          >
-            Αναζήτηση
-          </Button>
-          {AuthData.isLoggedIn && (
-            <FormGroup>
-              <FormControlLabel control={<Checkbox />} label="Αποθήκευση" />
-            </FormGroup>
-          )}
-        </Grid>
-      </Grid>
+      </form>
+
       <Map />
     </>
   );
