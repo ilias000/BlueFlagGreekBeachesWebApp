@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
@@ -24,7 +24,7 @@ export default function Header(props: any) {
       <AppBar position="fixed" sx={{ backgroundColor: "var(--primary-color)" }}>
         <Toolbar>
           <Grid container justifyContent="flex-start">
-            <Link to={"/"}>
+            <Link to={"/"} onClick={() => props.setClickedSearch(false)}>
               <Grid>
                 <Box
                   sx={{
@@ -41,11 +41,23 @@ export default function Header(props: any) {
               <>
                 <Grid container columnGap={1} justifyContent="flex-end">
                   <Grid display="flex" alignItems="center">
-                    <Box>
+                    <Link to={"/"}>
                       <Typography variant="body1" color="white">
-                        {AuthData.username}
+                        Αναζήτηση
                       </Typography>
-                    </Box>
+                    </Link>
+                  </Grid>
+                  <Grid display="flex" alignItems="center">
+                    <Link to={"/notifications"}>
+                      <Typography variant="body1" color="white">
+                        Ειδοποιήσεις
+                      </Typography>
+                    </Link>
+                  </Grid>
+                  <Grid display="flex" alignItems="center">
+                    <Typography variant="body1" color="white">
+                      {AuthData.username}
+                    </Typography>
                   </Grid>
                   <Grid display="flex" alignItems="center">
                     <button
@@ -60,7 +72,7 @@ export default function Header(props: any) {
             ) : (
               <>
                 <Grid display="flex" alignItems="center">
-                  <Link to={"/"} onClick={() => props.setIsSearch(true)}>
+                  <Link to={"/"} onClick={() => props.setClickedSearch(true)}>
                     <Typography variant="body1" color="white">
                       Αναζήτηση
                     </Typography>

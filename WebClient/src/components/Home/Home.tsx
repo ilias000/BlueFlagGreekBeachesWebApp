@@ -6,13 +6,17 @@ import Welcome from "./Welcome";
 import AuthContext from "../Shared/Auth";
 
 export default function Home() {
-  const [isSearch, setIsSearch] = React.useState(false);
+  const [clickedSearch, setClickedSearch] = React.useState(false);
   const { AuthData } = React.useContext(AuthContext);
 
   return (
     <>
-      <Header setIsSearch={setIsSearch} />
-      {isSearch || AuthData.isLoggedIn ? <Search /> : <Welcome />}
+      <Header setClickedSearch={setClickedSearch} />
+      {AuthData.role === "anonymous" && !clickedSearch ? (
+        <Welcome />
+      ) : (
+        <Search />
+      )}
       <Footer />
     </>
   );
