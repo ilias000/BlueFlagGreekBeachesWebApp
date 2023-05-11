@@ -34,9 +34,10 @@ export default function Places({ setSelected, map }: PlacesProps) {
 
   const handleInput = React.useCallback(
     (e: React.FormEvent, value: string | null) => {
-      if (!map || !value) {
+      if (!value) return;
+      if (!map) {
         console.error(
-          "Unexpected error: cannot display location of place since map or name of place is undefined"
+          "Unexpected error: cannot display location of place since map is undefined"
         );
         return;
       }
