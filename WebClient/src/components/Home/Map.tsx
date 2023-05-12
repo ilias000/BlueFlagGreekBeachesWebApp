@@ -1,9 +1,10 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { GoogleMap, Circle } from "@react-google-maps/api";
+import { GoogleMap, Circle, Marker } from "@react-google-maps/api";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import Places from "./Places";
 import Box from "@mui/material/Box";
+import RoomIcon from "@mui/icons-material/Room";
 
 export default function Map() {
   const [selected, setSelected] = React.useState<google.maps.LatLng | null>();
@@ -11,6 +12,7 @@ export default function Map() {
   const [circle, setCircle] = React.useState<google.maps.Circle>();
   const [radius, setRadius] = React.useState(1500.0);
   const [mapLoaded, setMapLoaded] = React.useState(false);
+  const [selectPoint, setSelectPoint] = React.useState(false);
 
   const initcenter = React.useMemo(() => ({ lat: 39.0, lng: 23.5 }), []);
   const options = React.useMemo(
@@ -24,8 +26,9 @@ export default function Map() {
         latLngBounds: { north: 41.8, east: 28.45, west: 18.9, south: 34.8 },
       },
       minZoom: 7,
+      draggableCursor: selectPoint ? "url(marker.png), auto" : null,
     }),
-    []
+    [selectPoint]
   );
 
   const handleRadiusChange = React.useCallback(() => {
@@ -58,6 +61,15 @@ export default function Map() {
     );
   }, []);
 
+  const handleMapClick = React.useCallback(
+    (e: google.maps.MapMouseEvent) => {
+      if (!selectPoint || !e.latLng) return;
+      setSelected(new google.maps.LatLng(e.latLng.lat(), e.latLng.lng()));
+      setSelectPoint(false);
+    },
+    [selectPoint]
+  );
+
   return (
     <>
       <Grid
@@ -89,6 +101,7 @@ export default function Map() {
               setMap(map);
               setMapLoaded(true);
             }}
+            onClick={handleMapClick}
           >
             {mapLoaded && (
               <>
@@ -103,16 +116,31 @@ export default function Map() {
                     }}
                   />
                 </button>
+
+                <button onClick={() => setSelectPoint(true)}>
+                  <RoomIcon
+                    sx={{
+                      position: "absolute",
+                      left: "20rem",
+                      top: "1rem",
+                      height: "3rem",
+                      width: "3rem",
+                      color: "red",
+                    }}
+                  />
+                </button>
+
                 {selected && (
                   <>
-                    <Circle
+                    <Marker position={selected} />
+                    {/* <Circle
                       onLoad={(circle) => setCircle(circle)}
                       center={selected}
                       radius={radius}
                       editable={true}
                       onRadiusChanged={handleRadiusChange}
                       onCenterChanged={handleCenterChange}
-                    />
+                    /> */}
                   </>
                 )}
               </>

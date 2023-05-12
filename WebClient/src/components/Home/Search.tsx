@@ -55,7 +55,7 @@ export default function Search() {
               variant="text"
               sx={{ BackgroundColor: "var(--primary-color)", mt: 2 }}
             >
-              Αναζήτηση
+              ΑΝΑΖΗΤΗΣΗ
             </Button>
             {AuthData.isLoggedIn && (
               <FormGroup>
