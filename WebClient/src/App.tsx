@@ -4,6 +4,7 @@ import Admin from "./components/Admin/Admin";
 import Home from "./components/Home/Home";
 import Notifications from "./components/Notifications/Notifications";
 import NotFound from "./components/Shared/NotFound";
+import Test from "./components/Shared/Test";
 import { AuthProvider } from "./components/Shared/Auth";
 
 const AppRouter = createBrowserRouter([
@@ -18,6 +19,10 @@ const AppRouter = createBrowserRouter([
   {
     path: "/notifications",
     element: <Notifications />,
+  },
+  {
+    path: "/test",
+    element: <Test />,
   },
   {
     path: "*",

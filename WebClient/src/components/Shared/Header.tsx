@@ -40,34 +40,27 @@ export default function Header(props: any) {
           <Grid container columnGap={3} justifyContent="flex-end">
             {AuthData.isLoggedIn ? (
               <>
-                <Grid container columnGap={1} justifyContent="flex-end">
-                  <Grid display="flex" alignItems="center">
-                    <Link to={"/"}>
-                      <Typography variant="body1" color="white">
-                        Αναζήτηση
-                      </Typography>
-                    </Link>
-                  </Grid>
-                  <Grid display="flex" alignItems="center">
-                    <Link to={"/notifications"}>
-                      <Typography variant="body1" color="white">
-                        Ειδοποιήσεις
-                      </Typography>
-                    </Link>
-                  </Grid>
-                  <Grid display="flex" alignItems="center">
+                <Grid display="flex" alignItems="center">
+                  <Link to={"/"}>
                     <Typography variant="body1" color="white">
-                      {AuthData.username}
+                      Αναζήτηση
                     </Typography>
-                  </Grid>
-                  <Grid display="flex" alignItems="center">
-                    <button
-                      onClick={LogoutUser}
-                      style={{ backgroundColor: "inherit" }}
-                    >
-                      <AccountCircleIcon></AccountCircleIcon>
-                    </button>
-                  </Grid>
+                  </Link>
+                </Grid>
+                <Grid display="flex" alignItems="center">
+                  <Link to={"/notifications"}>
+                    <Typography variant="body1" color="white">
+                      Ειδοποιήσεις
+                    </Typography>
+                  </Link>
+                </Grid>
+                <Grid>
+                  <button
+                    onClick={LogoutUser}
+                    style={{ backgroundColor: "inherit", padding: 0 }}
+                  >
+                    <AccountCircleIcon></AccountCircleIcon>
+                  </button>
                 </Grid>
               </>
             ) : (

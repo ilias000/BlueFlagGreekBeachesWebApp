@@ -3,7 +3,7 @@ import { BeatLoader } from "react-spinners";
 import { AppBar, Toolbar } from "@mui/material";
 
 const AuthContext = React.createContext({
-  AuthData: { user_id: "", username: "", role: "anonymous", isLoggedIn: false },
+  AuthData: { user_id: "", email: "", role: "anonymous", isLoggedIn: false },
   LoginUser: (e: React.FormEvent) => {},
   LogoutUser: () => {},
 });
@@ -13,7 +13,7 @@ export default AuthContext;
 export function AuthProvider({ children }: any) {
   const [AuthData, setAuthData] = React.useState({
     user_id: "",
-    username: "",
+    email: "",
     role: "anonymous",
     isLoggedIn: false,
   });
@@ -25,7 +25,7 @@ export function AuthProvider({ children }: any) {
     if (success) {
       setAuthData({
         user_id: "01",
-        username: "giannis",
+        email: "giannis@gmail.com",
         role: "user",
         isLoggedIn: true,
       });
@@ -38,7 +38,7 @@ export function AuthProvider({ children }: any) {
     // axios call with form data
     setAuthData({
       user_id: "01",
-      username: "giannis",
+      email: "giannis@gmail.com",
       role: "user",
       isLoggedIn: true,
     });
@@ -47,7 +47,7 @@ export function AuthProvider({ children }: any) {
   const LogoutUser = React.useCallback(() => {
     setAuthData({
       user_id: "",
-      username: "",
+      email: "",
       role: "anonymous",
       isLoggedIn: false,
     });

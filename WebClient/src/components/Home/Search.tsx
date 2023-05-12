@@ -29,7 +29,7 @@ export default function Search() {
               disablePortal
               id="combo-box-demo"
               options={district}
-              sx={{ width: 300 }}
+              sx={{ width: 300, mt: 2 }}
               renderInput={(params) => <TextField {...params} label="Νομός" />}
             />
           </Grid>
@@ -38,18 +38,22 @@ export default function Search() {
               disablePortal
               id="combo-box-demo"
               options={municipality}
-              sx={{ width: 300 }}
+              sx={{ width: 300, mt: 2 }}
               renderInput={(params) => <TextField {...params} label="Δήμος" />}
             />
           </Grid>
           <Grid>
-            <TextField label="λέξεις-κλειδιά" variant="outlined" />
+            <TextField
+              sx={{ width: 300, mt: 2 }}
+              label="λέξεις-κλειδιά"
+              variant="outlined"
+            />
           </Grid>
           <Grid>
             <Button
               type="submit"
               variant="text"
-              sx={{ BackgroundColor: "var(--primary-color)" }}
+              sx={{ BackgroundColor: "var(--primary-color)", mt: 2 }}
             >
               Αναζήτηση
             </Button>
