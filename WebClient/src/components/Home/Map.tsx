@@ -1,8 +1,9 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { GoogleMap, Circle, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, Circle } from "@react-google-maps/api";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import Places from "./Places";
+import Box from "@mui/material/Box";
 
 export default function Map() {
   const [selected, setSelected] = React.useState<google.maps.LatLng | null>();
@@ -59,15 +60,23 @@ export default function Map() {
 
   return (
     <>
-      {import.meta.env.VITE_HIDDEN_MAP === "true" ? null : (
-        <Grid
-          container
-          spacing={0}
-          columnGap={5}
-          rowGap={5}
-          alignItems="center"
-          justifyContent="center"
-        >
+      <Grid
+        container
+        spacing={0}
+        columnGap={5}
+        rowGap={5}
+        alignItems="center"
+        justifyContent="center"
+      >
+        {import.meta.env.VITE_HIDDEN_MAP === "true" ? (
+          <Box
+            sx={{
+              width: "90vw",
+              height: "70vh",
+              backgroundColor: "grey",
+            }}
+          ></Box>
+        ) : (
           <GoogleMap
             mapContainerStyle={{
               width: "90vw",
@@ -109,8 +118,8 @@ export default function Map() {
               </>
             )}
           </GoogleMap>
-        </Grid>
-      )}
+        )}
+      </Grid>
     </>
   );
 }
