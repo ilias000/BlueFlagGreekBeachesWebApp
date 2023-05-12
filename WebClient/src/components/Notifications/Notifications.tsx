@@ -2,18 +2,21 @@ import React from "react";
 import Header from "../Shared/Header";
 import Footer from "../Shared/Footer";
 import AuthContext from "../Shared/Auth";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Notifications() {
   const { AuthData } = React.useContext(AuthContext);
 
-  if (!AuthData.isLoggedIn) {
-    return <Navigate to={"/"} replace={true} />;
-  }
+  const navigate = useNavigate();
+  React.useEffect(() => {
+    if (!AuthData.isLoggedIn) {
+      navigate("/");
+    }
+  }, [AuthData]);
 
   return (
     <>
-      <Header />
+      <Header setClickedSearch={() => {}} />
       <div>notifications</div>
       <Footer />
     </>

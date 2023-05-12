@@ -8,14 +8,15 @@ import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import { Link } from "react-router-dom";
 import AuthContext from "./Auth";
-import Typography from "@mui/material/Typography";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { Box, Modal } from "@mui/material";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+import { Box, Modal, Tabs, Tab, Typography } from "@mui/material";
 import "../../css/index.css";
 
-export default function Header(props: any) {
+interface HeaderProps {
+  setClickedSearch: React.Dispatch<React.SetStateAction<boolean>> | (() => {});
+}
+
+export default function Header(props: HeaderProps) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(0);
   const { AuthData, LogoutUser } = React.useContext(AuthContext);
@@ -66,7 +67,10 @@ export default function Header(props: any) {
             ) : (
               <>
                 <Grid display="flex" alignItems="center">
-                  <Link to={"/"} onClick={() => props.setClickedSearch(true)}>
+                  <Link
+                    to={"/search"}
+                    onClick={() => props.setClickedSearch(true)}
+                  >
                     <Typography variant="body1" color="white">
                       Αναζήτηση
                     </Typography>

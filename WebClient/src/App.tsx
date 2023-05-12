@@ -9,22 +9,32 @@ import { AuthProvider } from "./components/Shared/Auth";
 
 const AppRouter = createBrowserRouter([
   {
+    // render admin page for admin
     path: "/admin",
     element: <Admin />,
   },
   {
+    // render Welcome page for guests and search page for users
     path: "/",
     element: <Home />,
   },
   {
+    // render search page for guests under /search
+    path: "/search",
+    element: <Home />,
+  },
+  {
+    // render notifications page for users
     path: "/notifications",
     element: <Notifications />,
   },
   {
+    // test page for quickly testing css and javascript
     path: "/test",
     element: <Test />,
   },
   {
+    // any route that does not match any of the above should render NotFound component
     path: "*",
     element: <NotFound />,
   },
