@@ -8,7 +8,6 @@ import Checkbox from "@mui/material/Checkbox";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import AuthContext from "../Shared/Auth";
-import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../Shared/Header";
 import Footer from "../Shared/Footer";
 
@@ -22,18 +21,6 @@ const handleSubmit = (e: React.FormEvent) => {
 
 export default function Search() {
   const { AuthData } = React.useContext(AuthContext);
-
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  // redirect users from /search to / if the specific path was selected
-  React.useEffect(() => {
-    if (location.pathname === "/search") {
-      if (AuthData.isLoggedIn) {
-        navigate("/");
-      }
-    }
-  }, [AuthData]);
 
   return (
     <>
