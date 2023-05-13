@@ -16,7 +16,7 @@ export default function Notifications() {
 
   return (
     <>
-      <Header setClickedSearch={() => {}} />
+      <Header />
       <div>notifications</div>
       <Footer />
     </>

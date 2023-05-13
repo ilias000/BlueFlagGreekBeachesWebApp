@@ -5,6 +5,7 @@ import Home from "./components/Home/Home";
 import Notifications from "./components/Notifications/Notifications";
 import NotFound from "./components/Shared/NotFound";
 import Test from "./components/Shared/Test";
+import Search from "./components/Home/Search";
 import { AuthProvider } from "./components/Shared/Auth";
 
 const AppRouter = createBrowserRouter([
@@ -21,7 +22,7 @@ const AppRouter = createBrowserRouter([
   {
     // render search page for guests under /search
     path: "/search",
-    element: <Home />,
+    element: <Search />,
   },
   {
     // render notifications page for users

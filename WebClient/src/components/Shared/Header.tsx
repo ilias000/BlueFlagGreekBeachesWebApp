@@ -12,11 +12,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Box, Modal, Tabs, Tab, Typography } from "@mui/material";
 import "../../css/index.css";
 
-interface HeaderProps {
-  setClickedSearch: React.Dispatch<React.SetStateAction<boolean>> | (() => {});
-}
-
-export default function Header(props: HeaderProps) {
+export default function Header() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(0);
   const { AuthData, LogoutUser } = React.useContext(AuthContext);
@@ -26,7 +22,7 @@ export default function Header(props: HeaderProps) {
       <AppBar position="fixed" sx={{ backgroundColor: "var(--primary-color)" }}>
         <Toolbar>
           <Grid container justifyContent="flex-start">
-            <Link to={"/"} onClick={() => props.setClickedSearch(false)}>
+            <Link to={"/"}>
               <Grid>
                 <Box
                   sx={{
@@ -67,10 +63,7 @@ export default function Header(props: HeaderProps) {
             ) : (
               <>
                 <Grid display="flex" alignItems="center">
-                  <Link
-                    to={"/search"}
-                    onClick={() => props.setClickedSearch(true)}
-                  >
+                  <Link to={"/search"}>
                     <Typography variant="body1" color="white">
                       Αναζήτηση
                     </Typography>
