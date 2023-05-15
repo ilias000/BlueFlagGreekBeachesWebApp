@@ -1,0 +1,19 @@
+name: Continuous Integration React App
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        working-directory: WebClient
+        run: npm ci
+
+      - name: Build project
+        working-directory: WebClient
+        run: npm run build
