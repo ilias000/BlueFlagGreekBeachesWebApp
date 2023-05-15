@@ -2,7 +2,7 @@
 
 ### Instructions to run Web Client:  
 - cd WebClient  
-- npm install  
+- npm ci  
 - npm run dev  
 - o  
 
