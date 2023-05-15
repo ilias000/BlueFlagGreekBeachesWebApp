@@ -1,15 +1,14 @@
-# docker build . -t myproj
-# docker run -p 5173:5173 -d myproj
+# docker build . -t myproj            -> builds docker image called myproj with this DockerFile
+# docker run -p 5173:5173 -it myproj  -> creates and runs new docker container in interactive mode from image myproj
+# docker start -i <id>                -> starts exited container in interactive mode
 
-FROM node:18.14.2
+FROM node:18.16.0
 
 WORKDIR /app
 
-COPY package.json /app
-
-RUN npm install
-
 COPY . /app
+
+RUN npm ci
 
 EXPOSE 5173
 
