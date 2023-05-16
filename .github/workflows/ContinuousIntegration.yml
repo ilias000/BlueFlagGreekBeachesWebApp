@@ -23,4 +23,4 @@ jobs:
       run: |
         echo "🚨 Build files: "
         cd WebClient
-        find build/
+        find dist/
