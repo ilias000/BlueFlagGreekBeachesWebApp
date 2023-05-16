@@ -1,17 +1,34 @@
-:root {
+#root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
+  height: 100%;
+  width: 100%;
+  background-color: rgb(255, 255, 255) !important;
+  color: rgb(34, 33, 33) !important;
+
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
+
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --primary-color: #4355B9;
+  --on-primary-color: white;
+  --primary-container: #DEE0FF;
+  --on-primary-container: #00105C;
+  --secondary: #5B5D72;
+  --on-secondary: white;
 }
 
 a {
@@ -66,4 +83,8 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.MuiButton {
+  text-transform: none !important;
 }

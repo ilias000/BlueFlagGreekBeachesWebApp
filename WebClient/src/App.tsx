@@ -1,26 +1,75 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import "./App.css";
+import React from "react";
+import { AuthProvider } from "./components/Shared/Auth";
+import AuthContext from "./components/Shared/Auth";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Admin from "./components/Admin/Admin";
+import Notifications from "./components/Notifications/Notifications";
+import NotFound from "./components/Shared/NotFound";
+import Test from "./components/Shared/Test";
+import Search from "./components/Home/Search";
+import Welcome from "./components/Home/Welcome";
+import { Navigate } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0);
-
+export default function App() {
   return (
-    <div className="App">
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    <AuthProvider>
+      <Views />
+    </AuthProvider>
   );
 }
 
-export default App;
+function Views() {
+  const { AuthData } = React.useContext(AuthContext);
+
+  const ViewRouter = React.useMemo(
+    () =>
+      createBrowserRouter([
+        {
+          // render admin page for admin
+          path: "/admin",
+          element: (
+            <>{AuthData.role === "admin" ? <Admin /> : <Navigate to={"/"} />}</>
+          ),
+        },
+        {
+          // render Welcome page for guests and search page for users
+          path: "/",
+          element: <>{AuthData.isLoggedIn ? <Search /> : <Welcome />}</>,
+        },
+        {
+          // render search page for guests under /search
+          path: "/search",
+          element: (
+            <>
+              {AuthData.role === "anonymous" ? (
+                <Search />
+              ) : (
+                <Navigate to={"/"} />
+              )}
+            </>
+          ),
+        },
+        {
+          // render notifications page for users
+          path: "/notifications",
+          element: (
+            <>
+              {AuthData.isLoggedIn ? <Notifications /> : <Navigate to={"/"} />}
+            </>
+          ),
+        },
+        {
+          // test page for quickly testing css and javascript
+          path: "/test",
+          element: <Test />,
+        },
+        {
+          // any route that does not match any of the above should render NotFound component
+          path: "*",
+          element: <NotFound />,
+        },
+      ]),
+    [AuthData]
+  );
+  return <RouterProvider router={ViewRouter} />;
+}
