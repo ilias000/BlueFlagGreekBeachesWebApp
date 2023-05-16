@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN npm ci
+RUN npm install
 
 EXPOSE 5173
 
