@@ -38,4 +38,6 @@ jobs:
           distribution: 'temurin'
 
       - name: 🛠️ Build and 🩺 Test API
-        run: mvn --batch-mode --update-snapshots verify
+        run: |
+          cd API
+          mvn --batch-mode --update-snapshots verify
