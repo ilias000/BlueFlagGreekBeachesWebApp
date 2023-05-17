@@ -1,6 +1,7 @@
 # Creates the Docker Image for the application by specifing the base image and the commands to create the image.
 # It uses Java 17. Specifying the image/environment it needs to have to run the application.
 FROM openjdk:17-alpine
+# Find jar file.
 ARG JAR_FILE=target/*.jar
 # Rename the jar file.
 COPY ${JAR_FILE} application.jar

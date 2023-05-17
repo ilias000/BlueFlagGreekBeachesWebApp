@@ -7,7 +7,7 @@
 FROM node:18.16.0
 # Application container directory.
 WORKDIR /app
-# Copy everything from current sirecotry to the app direcotry.
+# Copy everything from current direcotry to the app direcotry.
 COPY . /app
 # Install the dependencies to the local node_modules folder.
 RUN npm install
