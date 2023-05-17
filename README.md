@@ -1,6 +1,6 @@
 # DI_Software_Technology
 
-### Instructions to run Web Client:  
+### Instructions to run Web Client locally:  
 - cd WebClient  
 - npm install
 - npm run dev  
@@ -15,4 +15,8 @@
 
 ------  
 
-### Instructions to run api:    
+### Instructions to run database, api and webClient with docker:    
+- maven clean 
+- maven install
+- run docker-compose.yml
+- http://localhost:5173
