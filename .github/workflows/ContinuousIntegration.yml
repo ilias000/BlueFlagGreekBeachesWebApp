@@ -8,10 +8,10 @@ jobs:
     - name: 🚚 Get latest code
       uses: actions/checkout@v3
 
-    - name: 🟢 Use Node.js 16
+    - name: 🟢 Use Node.js 18.16.0
       uses: actions/setup-node@v2
       with:
-        node-version: '16'
+        node-version: '18.16.0'
       
     - name: 🛠️ Build WebClient
       run: |
