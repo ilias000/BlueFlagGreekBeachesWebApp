@@ -1,0 +1,47 @@
+version: '3.9'
+services:
+  blue_flag_greek_beaches_db:
+    image: mongo
+    restart: always # Will always restart the container if it exits.
+    container_name: blue_flag_greek_beaches_db_container
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpass
+      MONGO_INITDB_DATABASE: BlueFlagGreekBeaches
+    ports:
+      - "27017:27017"
+    # If you replace the ports with the expose only your application that runs on the container will be able to connect to the database, if you run the application from the host it won't connect to the database because the port 27017 of the container is not accessible from the host.
+    #    expose:
+    #      - "27017" # Informs Docker that the container listens on the specified network port at runtime. Expose does not make the ports of the container accessible to the host. It makes it available only for inter-container communication. So you use it if you want only other containers to communicate with this container and not the host.
+    volumes: # You map the physical file system of the host to the virtual file system of the container, so you do not lose the data when you restart or remove the container.
+      - blue_flag_greek_beaches_db_data:/data/db # host_volume_name:path_inside_the_container (you don't decide where the data are going to be stored in the hosts file system, but you give a name to the volume)
+  blue_flag_greek_beaches_api:
+    image: 'blue_flag_greek_beaches_api_image:latest' # Name for the application image that will be created with the dockerfile.
+    build: # Builds Docker images from a Dockerfile and a “context”. A build's context is the set of files located in the specified PATH or URL . The build process can refer to any of the files in the context.
+      context: API/BlueFlagGreekBeaches/ # Defines either a path to a directory containing a Dockerfile, or an url to a git repository. By default, the docker build command will look for a Dockerfile at the root of the context. You can specify the path to an alternative file to use instead with "dockerfile: pathToDockerfile/Dockerfile" (This path is relative to the build context directory).
+    restart: always # Will always restart the container if it exits.
+    container_name: blue_flag_greek_beaches_api_container
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE: admin
+      SPRING_DATA_MONGODB_USERNAME: root
+      SPRING_DATA_MONGODB_PASSWORD: rootpass
+      SPRING_DATA_MONGODB_DATABASE: BlueFlagGreekBeaches
+      SPRING_DATA_MONGODB_PORT: 27017
+      SPRING_DATA_MONGODB_HOST: blue_flag_greek_beaches_db
+      SPRING_DATA_MONGODB_AUTO_INDEX_CREATION: true
+    depends_on:
+      - blue_flag_greek_beaches_db # The dependencies containers will start first.
+    ports:
+      - "8081:8080" # Mapping localhost port with port inside the docker container. These ports will be accessible internally (from other containers) and published on the host machine. If you want to expose a port only for inter-container communication and not for the host you can use EXPOSE instead of PORTS.
+  blue_flag_greek_beaches_webclient:
+    image: 'blue_flag_greek_beaches_webclient_image:latest' # Name for the application image that will be created with the dockerfile.
+    build: # Builds Docker images from a Dockerfile and a “context”. A build's context is the set of files located in the specified PATH or URL . The build process can refer to any of the files in the context.
+      context: WebClient/ # Defines either a path to a directory containing a Dockerfile, or an url to a git repository. By default, the docker build command will look for a Dockerfile at the root of the context. You can specify the path to an alternative file to use instead with "dockerfile: pathToDockerfile/Dockerfile" (This path is relative to the build context directory).
+    restart: always # Will always restart the container if it exits.
+    container_name: blue_flag_greek_beaches_webclient_container
+    ports:
+      - "5173:5173" # Mapping localhost port with port inside the docker container. These ports will be accessible internally (from other containers) and published on the host machine. If you want to expose a port only for inter-container communication and not for the host you can use EXPOSE instead of PORTS.
+
+volumes:
+  blue_flag_greek_beaches_db_data: # Declaring which volumes are going to be mounted to the containers.
