@@ -39,5 +39,5 @@ jobs:
 
       - name: 🛠️ Build and 🩺 Test API
         run: |
-          cd API
+          cd API/BlueFlagGreekBeaches/
           mvn --batch-mode --update-snapshots verify
