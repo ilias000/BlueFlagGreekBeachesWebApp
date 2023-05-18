@@ -2,7 +2,7 @@
 # It uses Java 17. Specifying the image/environment it needs to have to run the application.
 FROM openjdk:17-alpine
 # Find jar file.
-ARG JAR_FILE=target/*.jar
+ARG JAR_FILE=build/libs/*.jar
 # Rename the jar file.
 COPY ${JAR_FILE} application.jar
 # Compile the application.

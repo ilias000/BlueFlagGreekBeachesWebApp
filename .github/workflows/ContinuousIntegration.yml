@@ -40,4 +40,4 @@ jobs:
       - name: 🛠️ Build and 🩺 Test API
         run: |
           cd API/BlueFlagGreekBeaches/
-          mvn --batch-mode --update-snapshots verify
+          ./gradlew build

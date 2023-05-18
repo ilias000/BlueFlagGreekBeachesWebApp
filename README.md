@@ -16,7 +16,7 @@
 ------  
 
 ### Instructions to run database, api and webClient with docker:    
-- maven clean 
-- maven install
-- run docker-compose.yml
+- grandlew clean 
+- grandlew build
+- run the file docker-compose.yml
 - http://localhost:5173
