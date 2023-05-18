@@ -40,4 +40,5 @@ jobs:
       - name: 🛠️ Build and 🩺 Test API
         run: |
           cd API/BlueFlagGreekBeaches/
+          chmod +x gradlew
           ./gradlew build
