@@ -1,5 +1,7 @@
 package com.BlueFlagGreekBeaches.model;
 
+import java.util.UUID;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,8 +10,8 @@ import jakarta.persistence.Id;
 @Entity // This tells Hibernate to make a table out of this class
 public class User {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
+    @GeneratedValue(strategy=GenerationType.UUID)
+    private UUID id;
 
     private String email;
 
@@ -22,11 +24,11 @@ public class User {
         this.password = password;
     }
 
-    public Integer getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

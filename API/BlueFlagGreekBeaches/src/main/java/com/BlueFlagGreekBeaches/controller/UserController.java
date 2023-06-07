@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/api/user")
@@ -23,13 +24,13 @@ public class UserController
     }
 
     @PostMapping("/add")
-    public void addUser(@RequestBody AddUserDto addUserDto)
+    public @ResponseBody GetUserDto addUser(@RequestBody AddUserDto addUserDto)
     {
-        userService.addUser(addUserDto);
+        return userService.addUser(addUserDto);
     }
 
     @GetMapping(path="/all")
-    public List<GetUserDto> getAllUsers() {
+    public @ResponseBody List<GetUserDto> getAllUsers() {
         return userService.getAllUsers();
     }
 }

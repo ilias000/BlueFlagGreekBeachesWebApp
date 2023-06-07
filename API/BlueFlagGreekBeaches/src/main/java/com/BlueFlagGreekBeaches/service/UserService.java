@@ -19,10 +19,11 @@ public class UserService
         this.userRepository = userRepository;
     }
 
-    public void addUser(AddUserDto addUserDto)
+    public GetUserDto addUser(AddUserDto addUserDto)
     {
         User user = new User(addUserDto.email(), addUserDto.password());
-        userRepository.save(user);
+        User responseUser = userRepository.save(user);
+        return new GetUserDto(responseUser.getEmail());
     }
 
     public List<GetUserDto> getAllUsers()
