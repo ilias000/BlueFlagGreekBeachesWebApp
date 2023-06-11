@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  blue_flag_greek_beaches_db:
+    image: mysql:latest
+    restart: always # Ensuring that the container restarts automatically if it stops unexpectedly.
+    container_name: blue_flag_greek_beaches_db_container
+    environment:
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: Adminpass@123
+      MYSQL_ROOT_PASSWORD: Rootpass@123
+      MYSQL_DATABASE: BlueFlagGreekBeaches
+    ports:
+      - "3306:3306" # Mapping localhost port with port inside the docker container. These ports will be accessible internally (from other containers) and published on the host machine. If you want to expose a port only for inter-container communication and not for the host you can use EXPOSE instead of PORTS.
+    # If you replace the ports with the expose, only your application that runs on the container will be able to connect to the database, if you run the application from the host it won't connect to the database because the port 3306 of the container is not accessible from the host.
+    #    expose:
+    #      - "3306" # Informs Docker that the container listens on the specified network port at runtime. Expose does not make the ports of the container accessible to the host. It makes it available only for inter-container communication. So you use it if you want only other containers to communicate with this container and not the host.
+    volumes: # You map the physical file system of the host to the virtual file system of the container, so you do not lose the data when you restart or remove the container.
+      - blue_flag_greek_beaches_db_data:/var/lib/mysql # host_volume_name:path_inside_the_container (you don't decide where the data are going to be stored in the hosts file system, but you give a name to the volume)
+  blue_flag_greek_beaches_api:
+    image: 'blue_flag_greek_beaches_api_image:latest' # Name for the API image that will be created with the dockerfile.
+    build: # Builds Docker images from a Dockerfile and a “context”. A build's context is the set of files located in the specified PATH or URL . The build process can refer to any of the files in the context.
+      context: API/BlueFlagGreekBeaches/ # Defines either a path to a directory containing a Dockerfile, or an url to a git repository. By default, the docker build command will look for a Dockerfile at the root of the context. You can specify the path to an alternative file to use instead with "dockerfile: pathToDockerfile/Dockerfile" (This path is relative to the build context directory).
+    restart: always # Ensuring that the container restarts automatically if it stops unexpectedly.
+    container_name: blue_flag_greek_beaches_api_container
+    environment:
+      SERVER_PORT: 8080
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: Rootpass@123
+      MYSQL_DATABASE: BlueFlagGreekBeaches
+      MYSQL_PORT: 3306
+    depends_on:
+      - blue_flag_greek_beaches_db # The dependencies containers will start first.
+    ports:
+#     TODO: Change the port to 8080
+      - "8081:8080" # Mapping localhost port with port inside the docker container. These ports will be accessible internally (from other containers) and published on the host machine. If you want to expose a port only for inter-container communication and not for the host you can use EXPOSE instead of PORTS.
+  blue_flag_greek_beaches_webclient:
+    image: 'blue_flag_greek_beaches_webclient_image:latest' # Name for the WebClient image that will be created with the dockerfile.
+    build: # Builds Docker images from a Dockerfile and a “context”. A build's context is the set of files located in the specified PATH or URL . The build process can refer to any of the files in the context.
+      context: WebClient/ # Defines either a path to a directory containing a Dockerfile, or an url to a git repository. By default, the docker build command will look for a Dockerfile at the root of the context. You can specify the path to an alternative file to use instead with "dockerfile: pathToDockerfile/Dockerfile" (This path is relative to the build context directory).
+    restart: always # Ensuring that the container restarts automatically if it stops unexpectedly.
+    container_name: blue_flag_greek_beaches_webclient_container
+    ports:
+      - "5173:5173" # Mapping localhost port with port inside the docker container. These ports will be accessible internally (from other containers) and published on the host machine. If you want to expose a port only for inter-container communication and not for the host you can use EXPOSE instead of PORTS.
+
+volumes:
+  blue_flag_greek_beaches_db_data: # Declaring which volumes are going to be mounted to the containers.
