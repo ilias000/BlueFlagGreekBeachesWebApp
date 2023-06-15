@@ -27,7 +27,7 @@ services:
       SPRING_DATASOURCE_URL: "jdbc:mysql://blue_flag_greek_beaches_db_container:3306/BlueFlagGreekBeaches"
       SPRING_DATASOURCE_USERNAME: "admin"
       SPRING_DATASOURCE_PASSWORD: "Adminpass@123"
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.hibernate.dialect.MySQL8Dialect"
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: "com.mysql.cj.jdbc.Driver"
     depends_on:
       - blue_flag_greek_beaches_db # The dependencies containers will start first.
     ports:
