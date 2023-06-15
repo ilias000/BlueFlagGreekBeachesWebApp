@@ -49,9 +49,11 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v3
 
-      - name: 🔄 Run docker-compose.yml
+      - name: Print Directory
         run: |
           pwd
+
+      - name: 🔄 Run docker-compose.yml
         uses: cloudposse/github-action-docker-compose-test-run@main
         with:
           file: /docker-compose.yml
