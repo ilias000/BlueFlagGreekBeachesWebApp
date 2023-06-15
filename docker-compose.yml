@@ -23,11 +23,11 @@ services:
     restart: always # Ensuring that the container restarts automatically if it stops unexpectedly.
     container_name: blue_flag_greek_beaches_api_container
     environment:
-      SERVER_PORT: 8080
-      MYSQL_USERNAME: root
-      MYSQL_PASSWORD: Rootpass@123
-      MYSQL_DATABASE: BlueFlagGreekBeaches
-      MYSQL_PORT: 3306
+      SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://blue_flag_greek_beaches_db_container:3306/BlueFlagGreekBeaches"
+      SPRING_DATASOURCE_USERNAME: "admin"
+      SPRING_DATASOURCE_PASSWORD: "Adminpass@123"
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: "org.hibernate.dialect.MySQL8Dialect"
     depends_on:
       - blue_flag_greek_beaches_db # The dependencies containers will start first.
     ports:
