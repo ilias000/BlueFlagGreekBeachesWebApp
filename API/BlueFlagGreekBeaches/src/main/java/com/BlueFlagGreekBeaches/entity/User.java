@@ -1,4 +1,4 @@
-package com.BlueFlagGreekBeaches.model;
+package com.BlueFlagGreekBeaches.entity;
 
 import java.util.UUID;
 
@@ -10,7 +10,7 @@ import jakarta.persistence.Id;
 @Entity // This tells Hibernate to make a table out of this class
 public class User {
     @Id
-    @GeneratedValue(strategy=GenerationType.UUID)
+    @GeneratedValue
     private UUID id;
 
     private String email;

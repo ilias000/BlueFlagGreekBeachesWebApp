@@ -3,10 +3,10 @@ package com.BlueFlagGreekBeaches.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.BlueFlagGreekBeaches.dao.UserRepository;
+import com.BlueFlagGreekBeaches.repository.UserRepository;
 import com.BlueFlagGreekBeaches.dto.AddUserDto;
 import com.BlueFlagGreekBeaches.dto.GetUserDto;
-import com.BlueFlagGreekBeaches.model.User;
+import com.BlueFlagGreekBeaches.entity.User;
 import org.springframework.stereotype.Service;
 
 @Service
