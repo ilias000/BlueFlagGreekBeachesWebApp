@@ -59,9 +59,9 @@ jobs:
         run: |
           cd API/BlueFlagGreekBeaches/
           chmod +x gradlew
-          ./gradlew build
+          ./gradlew build  --info --stacktrace
 
       - name: 🔄 Run docker-compose.yml
         uses: cloudposse/github-action-docker-compose-test-run@main
         with:
-          file: docker-compose.yml --info --stacktrace
+          file: docker-compose.yml
