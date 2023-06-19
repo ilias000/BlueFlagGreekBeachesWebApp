@@ -10,12 +10,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Category
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.UUID) // Instructs that a UUID for the entity should be generated automatically for us by the persistence provider.
     @Column(name = "id", nullable = false)
     private UUID id;
 
@@ -25,13 +31,9 @@ public class Category
     @ManyToMany(mappedBy = "categories")
     private List<PointOfInterest> pointOfInterests = new ArrayList<>();
 
-    public List<PointOfInterest> getPointOfInterests() {return pointOfInterests;}
-
-    public void setPointOfInterests(List<PointOfInterest> pointOfInterests) {this.pointOfInterests = pointOfInterests;}
-
-    public String getName() {return name;}
-
-    public void setName(String name) {this.name = name;}
-
-    public UUID getId() {return id;}
+    public Category(String name, List<PointOfInterest> pointOfInterests)
+    {
+        this.name = name;
+        this.pointOfInterests = pointOfInterests;
+    }
 }

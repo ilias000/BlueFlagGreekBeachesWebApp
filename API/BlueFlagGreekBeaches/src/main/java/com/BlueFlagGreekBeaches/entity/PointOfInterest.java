@@ -7,16 +7,23 @@ import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class PointOfInterest
 {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID) // Instructs that a UUID for the entity should be generated automatically for us by the persistence provider.
     @Column(name = "id", nullable = false)
     private UUID id;
 
@@ -26,7 +33,7 @@ public class PointOfInterest
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description") // Optional
     private String description;
 
     @Column(name = "latitude", nullable = false)
@@ -35,7 +42,7 @@ public class PointOfInterest
     @Column(name = "longitude", nullable = false)
     private double longitude;
 
-    @Column(name = "keywords")
+    @Column(name = "keywords") // Optional
     private List<String> keywords = new ArrayList<>();
 
     @ManyToMany
@@ -44,72 +51,15 @@ public class PointOfInterest
             inverseJoinColumns = @JoinColumn(name = "categories_id"))
     private List<Category> categories = new ArrayList<>();
 
-    public List<Category> getCategories() {return categories;}
-
-    public void setCategories(List<Category> categories) {this.categories = categories;}
-
-    public UUID getId()
-    {
-        return id;
-    }
-
-    public long getTimestampAdded()
-    {
-        return timestampAdded;
-    }
-
-    public void setTimestampAdded(long timestampAdded)
+    public PointOfInterest(long timestampAdded, String title, String description, double latitude, double longitude,
+                           List<String> keywords, List<Category> categories)
     {
         this.timestampAdded = timestampAdded;
-    }
-
-    public String getTitle()
-    {
-        return title;
-    }
-
-    public void setTitle(String title)
-    {
         this.title = title;
-    }
-
-    public String getDescription()
-    {
-        return description;
-    }
-
-    public void setDescription(String description)
-    {
         this.description = description;
-    }
-
-    public double getLatitude()
-    {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude)
-    {
         this.latitude = latitude;
-    }
-
-    public double getLongitude()
-    {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude)
-    {
         this.longitude = longitude;
-    }
-
-    public List<String> getKeywords()
-    {
-        return keywords;
-    }
-
-    public void setKeywords(List<String> keywords)
-    {
         this.keywords = keywords;
+        this.categories = categories;
     }
 }

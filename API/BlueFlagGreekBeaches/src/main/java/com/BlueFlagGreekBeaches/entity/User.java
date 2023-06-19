@@ -6,47 +6,26 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Entity // This tells Hibernate to make a table out of this class
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID) // Instructs that a UUID for the entity should be generated automatically for us by the persistence provider.
     private UUID id;
 
     private String email;
 
     private String password;
 
-    public User() {}
-
-    public User(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword()
+    public User(String email, String password)
     {
-        return password;
-    }
-
-    public void setPassword(String password)
-    {
+        this.email = email;
         this.password = password;
     }
 }
