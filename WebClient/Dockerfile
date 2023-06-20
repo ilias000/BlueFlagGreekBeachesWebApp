@@ -1,6 +1,7 @@
-# docker build . -t myproj            -> builds docker image called myproj with this DockerFile
-# docker run -p 5173:5173 -it myproj  -> creates and runs new docker container in interactive mode from image myproj
-# docker start -i <id>                -> starts exited container in interactive mode
+# Run docker build command from root directory of project to keep .git folder and its structure
+# docker build . -t myproj -f WebClient/Dockerfile  -> builds docker image called myproj with this DockerFile
+# docker run -p 5173:5173 -it myproj                -> creates and runs new docker container in interactive mode from image myproj
+# docker start -i <id>                              -> starts exited container in interactive mode
 
 # Creates the Docker Image for the application by specifing the base image and the commands to create the image.
 # It uses node18.16.0. Specifying the image/environment it needs to have to run the application.
@@ -9,6 +10,8 @@ FROM node:18.16.0
 WORKDIR /app
 # Copy everything from current direcotry to the app direcotry.
 COPY . /app
+# Change directory to the WebClient
+WORKDIR /app/WebClient/
 # Install the dependencies to the local node_modules folder.
 RUN npm install
 # Informs Docker that the container listens on the specified network port at runtime. EXPOSE does not make the ports of the container accessible to the host. It makes it available only for inter-container communication.
