@@ -11,8 +11,7 @@ import AuthContext from "../Shared/Auth";
 import Header from "../Shared/Header";
 import Footer from "../Shared/Footer";
 
-const district = [{ label: "Αττικής" }, { label: "Θεσσαλονίκης" }];
-const municipality = [{ label: "Αθηναίων" }, { label: "Ζωγράφου" }];
+const categories = [{ label: "Αθηναίων" }, { label: "Ζωγράφου" }];
 
 const handleSubmit = (e: React.FormEvent) => {
   e.preventDefault();
@@ -29,20 +28,12 @@ export default function Search() {
         <Grid container columnGap={5} mt={3} mb={3}>
           <Grid>
             <Autocomplete
+              multiple
+              filterSelectedOptions
               disablePortal
-              id="combo-box-demo"
-              options={district}
+              options={categories}
               sx={{ width: 300, mt: 2 }}
-              renderInput={(params) => <TextField {...params} label="Νομός" />}
-            />
-          </Grid>
-          <Grid>
-            <Autocomplete
-              disablePortal
-              id="combo-box-demo"
-              options={municipality}
-              sx={{ width: 300, mt: 2 }}
-              renderInput={(params) => <TextField {...params} label="Δήμος" />}
+              renderInput={(params) => <TextField {...params} label="Κατηγορίες" />}
             />
           </Grid>
           <Grid>
@@ -56,13 +47,21 @@ export default function Search() {
             <Button
               type="submit"
               variant="text"
-              sx={{ BackgroundColor: "var(--primary-color)", mt: 2 }}
+              sx={{ BackgroundColor: "var(--primary-color)", mt: 2, height: AuthData.isLoggedIn ? "2.5rem" : "3.5rem" }}
             >
               ΑΝΑΖΗΤΗΣΗ
             </Button>
             {AuthData.isLoggedIn && (
               <FormGroup>
-                <FormControlLabel control={<Checkbox />} label="Αποθήκευση" />
+                <FormControlLabel control={<Checkbox sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }} />} label={<div
+                  style={{
+                    fontSize: 14
+                  }}
+                >
+                  Αποθήκευση
+                </div>} sx={{
+
+                }} />
               </FormGroup>
             )}
           </Grid>
