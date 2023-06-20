@@ -44,13 +44,6 @@ export default function Header() {
                     </Typography>
                   </Link>
                 </Grid>
-                <Grid display="flex" alignItems="center">
-                  <Link to={"/notifications"}>
-                    <Typography variant="body1" color="white">
-                      Ειδοποιήσεις
-                    </Typography>
-                  </Link>
-                </Grid>
                 <Grid>
                   <button
                     onClick={LogoutUser}

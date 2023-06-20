@@ -3,7 +3,6 @@ import { AuthProvider } from "./components/Shared/Auth";
 import AuthContext from "./components/Shared/Auth";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Admin from "./components/Admin/Admin";
-import Notifications from "./components/Notifications/Notifications";
 import NotFound from "./components/Shared/NotFound";
 import Test from "./components/Shared/Test";
 import Search from "./components/Home/Search";
@@ -46,15 +45,6 @@ function Views() {
               ) : (
                 <Navigate to={"/"} />
               )}
-            </>
-          ),
-        },
-        {
-          // render notifications page for users
-          path: "/notifications",
-          element: (
-            <>
-              {AuthData.isLoggedIn ? <Notifications /> : <Navigate to={"/"} />}
             </>
           ),
         },
