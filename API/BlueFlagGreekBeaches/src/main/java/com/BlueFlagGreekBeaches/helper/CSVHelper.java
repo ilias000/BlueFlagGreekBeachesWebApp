@@ -4,12 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.BlueFlagGreekBeaches.entity.Category;
+import com.BlueFlagGreekBeaches.dto.AddCategoryDto;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -24,34 +23,34 @@ public class CSVHelper
         return TYPE.equals(file.getContentType());
     }
 
-    // Read InputStream of a file, return a list of Categories.
-    // public static List<Category> csvToCategories(InputStream is) {
-    //     try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-    //          CSVParser csvParser = new CSVParser(fileReader,
-    //                                              CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
-    //
-    //         List<Category> tutorials = new ArrayList<Category>();
-    //
-    //         Iterable<CSVRecord> csvRecords = csvParser.getRecords();
-    //
-    //         for (CSVRecord csvRecord : csvRecords) {
-    //             Category category = new Category(
-    //                     csvRecord.get("Title"),
-    //                     csvRecord.get("Description"),
-    //                     Boolean.parseBoolean(csvRecord.get("Published"))
-    //             );
-    //
-    //             tutorials.add(category);
-    //         }
-    //
-    //         return tutorials;
-    //     } catch (IOException e) {
-    //         throw new RuntimeException("fail to parse CSV file: " + e.getMessage());
-    //     }
-    //     catch (IOException e)
-    //     {
-    //         throw new RuntimeException(e);
-    //     }
-    // }
+    // Reads InputStream of a file, return a list of AddCategoryDto.
+    public static List<AddCategoryDto> csvToAddCategoryDtoList(MultipartFile file)
+    {
+        InputStream inputStream;
+        try
+        {
+            inputStream = file.getInputStream();
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException("Fail to parse CSV file: " + e.getMessage());
+        }
 
+        try (
+            BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.builder().setDelimiter('\t').setHeader("name").build())
+        ) {
+            List<AddCategoryDto> addCategoryDtoList = new ArrayList<>();
+
+            Iterable<CSVRecord> csvRecords = csvParser.getRecords();
+
+            for (CSVRecord csvRecord : csvRecords) {
+                AddCategoryDto addCategoryDto = new AddCategoryDto(csvRecord.get("name"));
+                addCategoryDtoList.add(addCategoryDto);
+            }
+            return addCategoryDtoList;
+        } catch (IOException e) {
+            throw new RuntimeException("Fail to parse CSV file: " + e.getMessage());
+        }
+    }
 }

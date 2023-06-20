@@ -1,6 +1,7 @@
 package com.BlueFlagGreekBeaches.controller;
 
-import com.BlueFlagGreekBeaches.dto.CSVMessageDto;
+import com.BlueFlagGreekBeaches.dto.ImportCategoryCSVResponseDto;
+import com.BlueFlagGreekBeaches.helper.CSVHelper;
 import com.BlueFlagGreekBeaches.service.ImportService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,14 +19,17 @@ public class ImportController
     public ImportController(ImportService importService) {this.importService = importService;}
 
     @PostMapping("/pois")
-    public ResponseEntity<CSVMessageDto> importPointsOfInterest(@RequestParam("file") MultipartFile file)
+    public ResponseEntity<ImportCategoryCSVResponseDto> importPointsOfInterest(@RequestParam("file") MultipartFile file)
     {
         return importService.importPointsOfInterest(file);
     }
 
     @PostMapping("categories")
-    public ResponseEntity<CSVMessageDto> importCategories(@RequestParam("file") MultipartFile file)
+    public ResponseEntity<ImportCategoryCSVResponseDto> importCategories(@RequestParam("file") MultipartFile file)
     {
+        if(!CSVHelper.hasCSVFormat(file)){
+            return ResponseEntity.badRequest().body(new ImportCategoryCSVResponseDto(null, "Please upload a csv file!"));
+        }
         return importService.importCategories(file);
     }
 }

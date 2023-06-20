@@ -31,9 +31,8 @@ public class Category
     @ManyToMany(mappedBy = "categories")
     private List<PointOfInterest> pointOfInterests = new ArrayList<>();
 
-    public Category(String name, List<PointOfInterest> pointOfInterests)
+    public Category(String name)
     {
         this.name = name;
-        this.pointOfInterests = pointOfInterests;
     }
 }

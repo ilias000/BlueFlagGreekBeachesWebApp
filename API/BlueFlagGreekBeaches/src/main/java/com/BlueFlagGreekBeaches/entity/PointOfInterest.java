@@ -45,7 +45,7 @@ public class PointOfInterest
     @Column(name = "keywords") // Optional
     private List<String> keywords = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany // Optional
     @JoinTable(name = "point_of_interest_categories",
             joinColumns = @JoinColumn(name = "point_of_interest_id"),
             inverseJoinColumns = @JoinColumn(name = "categories_id"))
