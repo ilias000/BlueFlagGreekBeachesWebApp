@@ -1,16 +1,12 @@
 import React from "react";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
-import Grid from "@mui/material/Grid";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import { Link } from "react-router-dom";
 import AuthContext from "./Auth";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, Modal, Tabs, Tab, Typography, MenuItem, Menu, Collapse } from "@mui/material";
+import { Box, Modal, Tabs, Tab, Typography, MenuItem, Menu, Grid, Button, Toolbar, AppBar } from "@mui/material";
 import "../../css/index.css";
 
 export default function Header() {
@@ -18,7 +14,6 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [anchorUserMenu, setAnchorUserMenu] = React.useState<null | HTMLElement>(null);
   const [value, setValue] = React.useState(0);
-  const [userDropDown, setUserDropDown] = React.useState(false);
   const { AuthData, LogoutUser } = React.useContext(AuthContext);
 
   return (
