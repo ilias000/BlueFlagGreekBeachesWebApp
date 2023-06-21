@@ -1,16 +1,14 @@
 import React from "react";
 import Map from "./Map";
-import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import AuthContext from "../Shared/Auth";
 import Header from "../Shared/Header";
 import Footer from "../Shared/Footer";
-import { Box } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, Grid, FormGroup, FormControlLabel, TextField } from "@mui/material";
+
+const inputBox = {
+  width: 300,
+  mt: 2
+}
 
 const categories = [{ label: "Αθηναίων" }, { label: "Ζωγράφου" }];
 
@@ -34,15 +32,15 @@ export default function Search() {
                 filterSelectedOptions
                 disablePortal
                 options={categories}
-                sx={{ width: 300, mt: 2 }}
+                sx={inputBox}
                 renderInput={(params) => <TextField {...params} label="Κατηγορίες" />}
               />
             </Grid>
             <Grid>
               <TextField
-                sx={{ width: 300, mt: 2 }}
                 label="λέξεις-κλειδιά"
                 variant="outlined"
+                sx={inputBox}
               />
             </Grid>
             <Grid>
