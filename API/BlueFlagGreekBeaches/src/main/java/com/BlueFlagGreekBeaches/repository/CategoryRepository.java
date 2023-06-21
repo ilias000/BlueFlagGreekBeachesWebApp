@@ -1,5 +1,6 @@
 package com.BlueFlagGreekBeaches.repository;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.BlueFlagGreekBeaches.entity.Category;
@@ -9,5 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID>
 {
-    boolean existsByName(String name);
+    List<Category> findByCategoryIdIn(List<Integer> categoriesIds);
+    List<Category> findByNameIn(List<String> categoriesNames);
 }

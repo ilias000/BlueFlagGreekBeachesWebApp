@@ -25,14 +25,18 @@ public class Category
     @Column(name = "id", nullable = false)
     private UUID id;
 
+    @Column(name = "category_id", nullable = false)
+    private int categoryId;
+
     @Column(name = "name", nullable = false)
     private String name;
 
     @ManyToMany(mappedBy = "categories")
-    private List<PointOfInterest> pointOfInterests = new ArrayList<>();
+    private List<PointOfInterest> pointsOfInterest = new ArrayList<>();
 
-    public Category(String name)
+    public Category(int categoryId ,String name)
     {
+        this.categoryId = categoryId;
         this.name = name;
     }
 }

@@ -2,8 +2,8 @@ package com.BlueFlagGreekBeaches.controller;
 
 import java.util.List;
 
-import com.BlueFlagGreekBeaches.dto.AddUserDto;
-import com.BlueFlagGreekBeaches.dto.GetUserDto;
+import com.BlueFlagGreekBeaches.dto.user.AddUserDto;
+import com.BlueFlagGreekBeaches.dto.user.GetUserDto;
 import com.BlueFlagGreekBeaches.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
