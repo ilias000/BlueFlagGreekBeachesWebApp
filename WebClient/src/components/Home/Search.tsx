@@ -7,8 +7,8 @@ import { Autocomplete, Box, Button, Checkbox, Grid, FormGroup, FormControlLabel,
 
 const inputBox = {
   width: 300,
-  mt: 2
-}
+  mt: 2,
+};
 
 const categories = [{ label: "Αθηναίων" }, { label: "Ζωγράφου" }];
 
@@ -37,29 +37,33 @@ export default function Search() {
               />
             </Grid>
             <Grid>
-              <TextField
-                label="λέξεις-κλειδιά"
-                variant="outlined"
-                sx={inputBox}
-              />
+              <TextField label="λέξεις-κλειδιά" variant="outlined" sx={inputBox} />
             </Grid>
             <Grid>
               <Button
                 type="submit"
                 variant="text"
-                sx={{ BackgroundColor: "var(--primary-color)", mt: 2, height: AuthData.isLoggedIn ? "2.5rem" : "3.5rem" }}
+                sx={{
+                  BackgroundColor: "var(--primary-color)",
+                  mt: 2,
+                  height: AuthData.isLoggedIn ? "2.5rem" : "3.5rem",
+                }}
               >
                 ΑΝΑΖΗΤΗΣΗ
               </Button>
               {AuthData.isLoggedIn && (
                 <FormGroup>
-                  <FormControlLabel control={<Checkbox sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }} />} label={<div
-                    style={{
-                      fontSize: 14
-                    }}
-                  >
-                    Αποθήκευση
-                  </div>}
+                  <FormControlLabel
+                    control={<Checkbox sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }} />}
+                    label={
+                      <div
+                        style={{
+                          fontSize: 14,
+                        }}
+                      >
+                        Αποθήκευση
+                      </div>
+                    }
                   />
                 </FormGroup>
               )}

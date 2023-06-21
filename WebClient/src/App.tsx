@@ -26,9 +26,7 @@ function Views() {
         {
           // render admin page for admin
           path: "/admin",
-          element: (
-            <>{AuthData.role === "admin" ? <Admin /> : <Navigate to={"/"} />}</>
-          ),
+          element: <>{AuthData.role === "admin" ? <Admin /> : <Navigate to={"/"} />}</>,
         },
         {
           // render Welcome page for guests and search page for users
@@ -38,15 +36,7 @@ function Views() {
         {
           // render search page for guests under /search
           path: "/search",
-          element: (
-            <>
-              {AuthData.role === "anonymous" ? (
-                <Search />
-              ) : (
-                <Navigate to={"/"} />
-              )}
-            </>
-          ),
+          element: <>{AuthData.role === "anonymous" ? <Search /> : <Navigate to={"/"} />}</>,
         },
         {
           // test page for quickly testing css and javascript

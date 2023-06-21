@@ -16,7 +16,6 @@ export default function Header() {
   const [tab, setTab] = React.useState(0);
   const { AuthData, LogoutUser } = React.useContext(AuthContext);
 
-
   const userProfile = React.useCallback(() => {
     return (
       <Grid>
@@ -27,14 +26,13 @@ export default function Header() {
           <AccountCircleIcon></AccountCircleIcon>
         </button>
       </Grid>
-    )
+    );
   }, []);
 
   return (
     <>
       <AppBar position="fixed" sx={{ backgroundColor: "var(--primary-color)" }}>
         <Toolbar>
-
           {/* logo */}
           <Grid container>
             <Grid item justifyContent="flex-start">
@@ -51,11 +49,14 @@ export default function Header() {
           </Grid>
 
           {/* Display appbar contents above xs device width and use dynamic display based on log-in status */}
-          <Grid container columnGap={3} justifyContent="flex-end" sx={{ '@media (max-width: 600px)': { display: 'none' } }}>
+          <Grid
+            container
+            columnGap={3}
+            justifyContent="flex-end"
+            sx={{ "@media (max-width: 600px)": { display: "none" } }}
+          >
             {AuthData.isLoggedIn ? (
-              <>
-                {userProfile()}
-              </>
+              <>{userProfile()}</>
             ) : (
               <>
                 <Grid display="flex" alignItems="center">
@@ -87,10 +88,15 @@ export default function Header() {
           </Grid>
 
           {/* Collapse appbar contents on xs devices. There is no need to collapse for logged in users*/}
-          {!AuthData.isLoggedIn &&
+          {!AuthData.isLoggedIn && (
             <>
-              <Button onClick={(e: React.MouseEvent<HTMLButtonElement>) => setNavMenu(e.currentTarget)}
-                sx={{ color: "white", '@media (min-width: 601px)': { display: 'none' } }}>
+              <Button
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => setNavMenu(e.currentTarget)}
+                sx={{
+                  color: "white",
+                  "@media (min-width: 601px)": { display: "none" },
+                }}
+              >
                 <MenuIcon />
               </Button>
 
@@ -102,26 +108,31 @@ export default function Header() {
                     </Typography>
                   </Link>
                 </MenuItem>
-                <MenuItem onClick={() => { setNavMenu(null); setOpenModal(true); }}>
+                <MenuItem
+                  onClick={() => {
+                    setNavMenu(null);
+                    setOpenModal(true);
+                  }}
+                >
                   Σύνδεση
                 </MenuItem>
               </Menu>
-            </>}
+            </>
+          )}
 
           {/* Display user icon if user is logged in */}
-          {AuthData.isLoggedIn &&
+          {AuthData.isLoggedIn && (
             <>
-              <Grid container justifyContent="flex-end" sx={{ '@media (min-width: 601px)': { display: 'none' } }}>
+              <Grid container justifyContent="flex-end" sx={{ "@media (min-width: 601px)": { display: "none" } }}>
                 {userProfile()}
               </Grid>
               <Menu open={Boolean(userMenu)} anchorEl={userMenu} onClose={() => setUserMenu(null)}>
                 <MenuItem onClick={LogoutUser}>logout</MenuItem>
               </Menu>
             </>
-          }
-
+          )}
         </Toolbar>
-      </AppBar >
+      </AppBar>
       <Modal
         open={openModal}
         onClose={() => setOpenModal(false)}
@@ -143,7 +154,6 @@ export default function Header() {
             p: 4,
           }}
         >
-
           <Box sx={{ justifyContent: "space-between" }}>
             <Tabs
               value={tab}
@@ -166,7 +176,7 @@ export default function Header() {
             </Button>
           </Box>
         </Box>
-      </Modal >
+      </Modal>
     </>
   );
 }

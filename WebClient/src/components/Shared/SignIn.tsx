@@ -9,25 +9,17 @@ interface PropsSignIn {
 export default function SingIn(props: PropsSignIn) {
   const { LoginUser } = React.useContext(AuthContext);
 
-  const handleSubmit = React.useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      LoginUser(e);
-      props.setOpen(false);
-    },
-    []
-  );
+  const handleSubmit = React.useCallback((e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    LoginUser(e);
+    props.setOpen(false);
+  }, []);
 
   return (
     <>
       <form onSubmit={handleSubmit}>
         <p>Φόρμα σύνδεσης</p>
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          sx={{ textTransform: "none !important" }}
-        >
+        <Button variant="contained" color="primary" type="submit" sx={{ textTransform: "none !important" }}>
           Σύνδεση
         </Button>
       </form>

@@ -1,14 +1,9 @@
-import usePlacesAutocomplete, {
-  getGeocode,
-  getLatLng,
-} from "use-places-autocomplete";
+import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete";
 import { TextField, Autocomplete } from "@mui/material";
 import React from "react";
 
 interface PlacesProps {
-  setSelected: React.Dispatch<
-    React.SetStateAction<google.maps.LatLng | null | undefined>
-  >;
+  setSelected: React.Dispatch<React.SetStateAction<google.maps.LatLng | null | undefined>>;
   map: google.maps.Map | undefined;
 }
 
@@ -32,35 +27,28 @@ export default function Places({ setSelected, map }: PlacesProps) {
     debounce: 500,
   });
 
-  const handleInput = React.useCallback(
-    (e: React.FormEvent, value: string | null) => {
-      if (!value) return;
-      if (!map) {
-        console.error(
-          "Unexpected error: cannot display location of place since map is undefined"
-        );
-        return;
-      }
-      clearSuggestions();
-      getGeocode({ address: value, componentRestrictions: { country: "gr" } })
-        .then((results) => {
-          const { lat, lng } = getLatLng(results[0]);
-          setSelected(new google.maps.LatLng(lat, lng));
-          map.setZoom(13);
-          map.panTo({ lat, lng });
-        })
-        .catch((reason) => {
-          console.log("reasong" + reason);
-          alert("Η περιοχή δεν βρέθηκε");
-        });
-    },
-    []
-  );
+  const handleInput = React.useCallback((e: React.FormEvent, value: string | null) => {
+    if (!value) return;
+    if (!map) {
+      console.error("Unexpected error: cannot display location of place since map is undefined");
+      return;
+    }
+    clearSuggestions();
+    getGeocode({ address: value, componentRestrictions: { country: "gr" } })
+      .then((results) => {
+        const { lat, lng } = getLatLng(results[0]);
+        setSelected(new google.maps.LatLng(lat, lng));
+        map.setZoom(13);
+        map.panTo({ lat, lng });
+      })
+      .catch((reason) => {
+        console.log("reasong" + reason);
+        alert("Η περιοχή δεν βρέθηκε");
+      });
+  }, []);
 
   if (status === "OK") {
-    suggestions = data
-      .slice(0, 1)
-      .map(({ structured_formatting }) => structured_formatting.main_text);
+    suggestions = data.slice(0, 1).map(({ structured_formatting }) => structured_formatting.main_text);
   }
 
   return (

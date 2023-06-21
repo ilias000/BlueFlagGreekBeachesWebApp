@@ -46,9 +46,7 @@ export default function Map() {
 
   const findMyLocation = React.useCallback((setSelected: any, map: any) => {
     if (!map) {
-      console.error(
-        "unexpected error: Cannot display location since map is undefined"
-      );
+      console.error("unexpected error: Cannot display location since map is undefined");
     }
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -87,14 +85,7 @@ export default function Map() {
 
   return (
     <>
-      <Grid
-        container
-        spacing={0}
-        columnGap={5}
-        rowGap={5}
-        alignItems="center"
-        justifyContent="center"
-      >
+      <Grid container spacing={0} columnGap={5} rowGap={5} alignItems="center" justifyContent="center">
         {import.meta.env.VITE_HIDDEN_MAP === "true" ? (
           <Box
             sx={{
