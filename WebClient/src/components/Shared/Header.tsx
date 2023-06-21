@@ -128,14 +128,16 @@ export default function Header() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "25%",
+            width: "80vw",
+            maxWidth: "550px",
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,
             p: 4,
           }}
         >
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+
+          <Box sx={{ justifyContent: "space-between" }}>
             <Tabs
               value={value}
               onChange={(e, newValue) => setValue(newValue)}
@@ -145,14 +147,16 @@ export default function Header() {
               <Tab label="ΣΥΝΔΕΣΗ" />
               <Tab label="ΕΓΓΡΑΦΗ" />
             </Tabs>
-            <Button onClick={() => setOpenModal(false)}>
-              <CloseIcon></CloseIcon>
-            </Button>
-
           </Box>
           <Box>
             {value === 0 && <SignIn setOpen={setOpenModal} />}
             {value === 1 && <SignUp setOpen={setOpenModal} />}
+          </Box>
+
+          <Box sx={{ position: "absolute", top: "0.2rem", right: "0.2rem" }}>
+            <Button onClick={() => setOpenModal(false)}>
+              <CloseIcon></CloseIcon>
+            </Button>
           </Box>
         </Box>
       </Modal >
