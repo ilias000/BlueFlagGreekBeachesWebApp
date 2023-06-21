@@ -1,6 +1,6 @@
 import React from "react";
-import Header from "../Shared/Header";
-import Footer from "../Shared/Footer";
+import Header from "../Secondary/Header";
+import Footer from "../Secondary/Footer";
 
 export default function Welcome() {
   return (

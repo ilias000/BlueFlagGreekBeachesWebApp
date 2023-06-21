@@ -1,8 +1,8 @@
 import React from "react";
 import Map from "./Map";
-import AuthContext from "../Shared/Auth";
-import Header from "../Shared/Header";
-import Footer from "../Shared/Footer";
+import AuthContext from "../Secondary/Auth";
+import Header from "../Secondary/Header";
+import Footer from "../Secondary/Footer";
 import { Autocomplete, Box, Button, Checkbox, Grid, FormGroup, FormControlLabel, TextField } from "@mui/material";
 
 const inputBox = {

@@ -1,10 +1,10 @@
 import React from "react";
-import { AuthProvider } from "./components/Shared/Auth";
-import AuthContext from "./components/Shared/Auth";
+import { AuthProvider } from "./components/Secondary/Auth";
+import AuthContext from "./components/Secondary/Auth";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Admin from "./components/Admin/Admin";
-import NotFound from "./components/Shared/NotFound";
-import Test from "./components/Shared/Test";
+import NotFound from "./components/Secondary/NotFound";
+import Test from "./components/Secondary/Test";
 import Search from "./components/Home/Search";
 import Welcome from "./components/Home/Welcome";
 import { Navigate } from "react-router-dom";
