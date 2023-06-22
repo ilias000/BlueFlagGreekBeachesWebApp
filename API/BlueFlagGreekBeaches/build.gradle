@@ -21,6 +21,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.28'
 	// TODO: Check if the junit implementation is needed or is already included in spring-boot-starter-test.
 	testImplementation('org.junit.jupiter:junit-jupiter:5.8.2', 'org.springframework.boot:spring-boot-starter-test')
+	testImplementation 'com.h2database:h2:2.1.214'
 }
 
 tasks.named('test') {
