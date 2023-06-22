@@ -29,7 +29,9 @@ export default function Map() {
         latLngBounds: { north: 41.8, east: 28.45, west: 18.9, south: 34.8 },
       },
       minZoom: 7,
-      draggableCursor: selectPoint ? "url(marker.png), auto" : null,
+      // Display a cursor with a marker icon whenever the user wants to select a point. Get marker.png
+      // from public folder and set the cursor to the bottom center of the marker (20 and 47 px).
+      draggableCursor: selectPoint ? "url(marker.png) 20 47, auto" : null,
     }),
     [selectPoint]
   );
