@@ -4,9 +4,15 @@ import { GoogleMap, Circle, Marker } from "@react-google-maps/api";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import Places from "./Places";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import RoomIcon from "@mui/icons-material/Room";
 import CircleIcon from "@mui/icons-material/Circle";
 import DeleteIcon from "@mui/icons-material/Delete";
+
+const iconClass = {
+  height: "3rem",
+  width: "3rem",
+};
 
 export default function Map() {
   const [selected, setSelected] = React.useState<google.maps.LatLng | null>();
@@ -113,7 +119,47 @@ export default function Map() {
           >
             {mapLoaded && (
               <>
-                <Places setSelected={setSelected} map={map}></Places>
+                <Grid container justifyContent="flex-start" position="relative" xs={10} mt={3} ml={3}>
+                  <Grid item>
+                    <Places setSelected={setSelected} map={map}></Places>
+                  </Grid>
+                  <Grid item>
+                    <Button onClick={() => setSelectPoint(true)}>
+                      <RoomIcon
+                        sx={{
+                          ...iconClass,
+                          color: "red",
+                        }}
+                      />
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button onClick={() => handleDisplayCircle(map)}>
+                      <CircleIcon
+                        sx={{
+                          ...iconClass,
+                          color: "grey",
+                        }}
+                      />
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      onClick={() => {
+                        setDisplayCircle(false);
+                        setSelected(null);
+                      }}
+                    >
+                      <DeleteIcon
+                        sx={{
+                          ...iconClass,
+                          color: "black",
+                        }}
+                      />
+                    </Button>
+                  </Grid>
+                </Grid>
+
                 <button onClick={() => findMyLocation(setSelected, map)}>
                   <MyLocationIcon
                     sx={{
@@ -121,47 +167,6 @@ export default function Map() {
                       right: "1.1rem",
                       bottom: "7.5rem",
                       color: "black",
-                    }}
-                  />
-                </button>
-                <button onClick={() => setSelectPoint(true)}>
-                  <RoomIcon
-                    sx={{
-                      position: "absolute",
-                      left: "17rem",
-                      top: "1rem",
-                      height: "3rem",
-                      width: "3rem",
-                      color: "red",
-                    }}
-                  />
-                </button>
-                <button onClick={() => handleDisplayCircle(map)}>
-                  <CircleIcon
-                    sx={{
-                      position: "absolute",
-                      left: "20rem",
-                      top: "1rem",
-                      height: "3rem",
-                      width: "3rem",
-                      color: "grey",
-                    }}
-                  />
-                </button>
-                <button
-                  onClick={() => {
-                    setDisplayCircle(false);
-                    setSelected(null);
-                  }}
-                >
-                  <DeleteIcon
-                    sx={{
-                      position: "absolute",
-                      left: "23rem",
-                      top: "1rem",
-                      height: "3rem",
-                      width: "3rem",
-                      color: "red",
                     }}
                   />
                 </button>

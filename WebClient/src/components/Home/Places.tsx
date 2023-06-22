@@ -59,8 +59,7 @@ export default function Places({ setSelected, map }: PlacesProps) {
         options={suggestions}
         sx={{
           width: "15rem",
-          top: "1rem",
-          left: "1rem",
+          maxWidth: "70vw",
           backgroundColor: "white",
           position: "relative",
         }}
