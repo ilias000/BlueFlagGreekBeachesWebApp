@@ -1,5 +1,5 @@
 import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete";
-import { TextField, Autocomplete } from "@mui/material";
+import { TextField, Autocomplete, Snackbar, Alert } from "@mui/material";
 import React from "react";
 
 interface PlacesProps {
@@ -8,6 +8,7 @@ interface PlacesProps {
 }
 
 export default function Places({ setSelected, map }: PlacesProps) {
+  const [notFound, setNotFound] = React.useState(false);
   let suggestions: string[] = React.useMemo(() => [], []);
 
   const {
@@ -18,7 +19,7 @@ export default function Places({ setSelected, map }: PlacesProps) {
     clearSuggestions,
   } = usePlacesAutocomplete({
     requestOptions: {
-      bounds: { north: 41.8, east: 28.45, west: 18.9, south: 34.8 },
+      locationRestriction: { north: 41.8, east: 28.45, west: 18.9, south: 34.8 },
       componentRestrictions: { country: "gr" },
       language: "el",
       region: "gr",
@@ -35,15 +36,22 @@ export default function Places({ setSelected, map }: PlacesProps) {
     }
     clearSuggestions();
     getGeocode({ address: value, componentRestrictions: { country: "gr" } })
-      .then((results) => {
-        const { lat, lng } = getLatLng(results[0]);
+      .then((value) => {
+        console.log(value);
+        const { lat, lng } = getLatLng(value[0]);
+        const point = new google.maps.LatLng(lat, lng);
+        // point (39.074208, 21.824312) is returned for ivalid places
+        if (point.lat() == 39.074208 && point.lng() == 21.824312) {
+          setNotFound(true);
+          return;
+        }
         setSelected(new google.maps.LatLng(lat, lng));
         map.setZoom(13);
         map.panTo({ lat, lng });
       })
       .catch((reason) => {
-        console.log("reasong" + reason);
-        alert("Η περιοχή δεν βρέθηκε");
+        console.log("reason: " + reason);
+        setNotFound(true);
       });
   }, []);
 
@@ -53,6 +61,16 @@ export default function Places({ setSelected, map }: PlacesProps) {
 
   return (
     <>
+      <Snackbar
+        open={notFound}
+        autoHideDuration={3000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        onClose={() => setNotFound(false)}
+      >
+        <Alert severity="error" onClose={() => setNotFound(false)}>
+          Η περιοχή δεν βρέθηκε
+        </Alert>
+      </Snackbar>
       <Autocomplete
         freeSolo
         onChange={handleInput}
