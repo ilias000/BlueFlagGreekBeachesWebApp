@@ -42,15 +42,15 @@ export default function Map() {
     [selectPoint]
   );
 
-  const handleRadiusChange = () => {
+  const handleRadiusChange = React.useCallback(() => {
     if (!circle) return;
     setRadius(circle.getRadius());
-  };
+  }, [circle]);
 
-  const handleCenterChange = () => {
+  const handleCenterChange = React.useCallback(() => {
     if (!circle) return;
     setSelected(circle.getCenter());
-  };
+  }, [circle]);
 
   const findMyLocation = React.useCallback((setSelected: any, map: any) => {
     if (!map) {
@@ -79,18 +79,18 @@ export default function Map() {
     [selectPoint]
   );
 
-  const handleDisplayCircle = (map: any) => {
+  const handleDisplayCircle = React.useCallback((map: any) => {
     if (!map) return;
     const temp_radius = 5 * Math.pow(2, 22 - map.getZoom());
     setRadius(temp_radius);
     setDisplayCircle(true);
-  };
+  }, []);
 
-  const handleDeleteCircle = () => {
+  const handleDeleteCircle = React.useCallback(() => {
     setDisplayCircle(false);
     setCircle(null);
     setSelected(null);
-  };
+  }, []);
 
   const MapButtons = () => {
     return (
