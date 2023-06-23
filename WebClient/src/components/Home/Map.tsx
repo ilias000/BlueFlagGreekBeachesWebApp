@@ -3,11 +3,10 @@ import { Grid } from "@mui/material";
 import { GoogleMap, Circle, Marker } from "@react-google-maps/api";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import Places from "./Places";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import RoomIcon from "@mui/icons-material/Room";
 import CircleIcon from "@mui/icons-material/Circle";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Snackbar, Alert, Box, Button, IconButton, Tooltip } from "@mui/material";
 
 const iconDimensions = {
   height: "3rem",
@@ -22,6 +21,7 @@ export default function Map() {
   const [mapLoaded, setMapLoaded] = React.useState(false);
   const [selectPoint, setSelectPoint] = React.useState(false);
   const [displayCircle, setDisplayCircle] = React.useState(false);
+  const [noPointSelected, setNoPointSelected] = React.useState(false);
 
   const initcenter = React.useMemo(() => ({ lat: 39.0, lng: 23.5 }), []);
   const options = React.useMemo(
@@ -79,12 +79,19 @@ export default function Map() {
     [selectPoint]
   );
 
-  const handleDisplayCircle = React.useCallback((map: any) => {
-    if (!map) return;
-    const temp_radius = 5 * Math.pow(2, 22 - map.getZoom());
-    setRadius(temp_radius);
-    setDisplayCircle(true);
-  }, []);
+  const handleDisplayCircle = React.useCallback(
+    (map: any) => {
+      if (!map) return;
+      if (!selected) {
+        setNoPointSelected(true);
+        return;
+      }
+      const temp_radius = 5 * Math.pow(2, 22 - map.getZoom());
+      setRadius(temp_radius);
+      setDisplayCircle(true);
+    },
+    [selected]
+  );
 
   const handleDeleteCircle = React.useCallback(() => {
     setDisplayCircle(false);
@@ -92,38 +99,48 @@ export default function Map() {
     setSelected(null);
   }, []);
 
+  const handleCloseNoPointSelected = () => {
+    setNoPointSelected(false);
+  };
+
   const MapButtons = () => {
     return (
       <>
         <Grid item>
-          <Button onClick={() => setSelectPoint(true)}>
-            <RoomIcon
-              sx={{
-                ...iconDimensions,
-                color: "red",
-              }}
-            />
-          </Button>
+          <Tooltip title="Επιλογή σημείου" placement="top">
+            <IconButton onClick={() => setSelectPoint(true)}>
+              <RoomIcon
+                sx={{
+                  ...iconDimensions,
+                  color: "red",
+                }}
+              />
+            </IconButton>
+          </Tooltip>
         </Grid>
         <Grid item>
-          <Button onClick={() => handleDisplayCircle(map)}>
-            <CircleIcon
-              sx={{
-                ...iconDimensions,
-                color: "grey",
-              }}
-            />
-          </Button>
+          <Tooltip title="Ορισμός κύκλου" placement="top">
+            <IconButton onClick={() => handleDisplayCircle(map)}>
+              <CircleIcon
+                sx={{
+                  ...iconDimensions,
+                  color: "grey",
+                }}
+              />
+            </IconButton>
+          </Tooltip>
         </Grid>
         <Grid item>
-          <Button onClick={handleDeleteCircle}>
-            <DeleteIcon
-              sx={{
-                ...iconDimensions,
-                color: "black",
-              }}
-            />
-          </Button>
+          <Tooltip title="Διαγραφή κύκλου" placement="top">
+            <IconButton onClick={handleDeleteCircle}>
+              <DeleteIcon
+                sx={{
+                  ...iconDimensions,
+                  color: "black",
+                }}
+              />
+            </IconButton>
+          </Tooltip>
         </Grid>
       </>
     );
@@ -131,6 +148,16 @@ export default function Map() {
 
   return (
     <>
+      <Snackbar
+        open={noPointSelected}
+        autoHideDuration={3000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        onClose={handleCloseNoPointSelected}
+      >
+        <Alert severity="warning" onClose={handleCloseNoPointSelected}>
+          Πρέπει να επιλέξετε σημείο στον χάρτη
+        </Alert>
+      </Snackbar>
       <Grid container spacing={0} columnGap={5} rowGap={5} alignItems="center" justifyContent="center">
         {import.meta.env.VITE_HIDDEN_MAP === "true" ? (
           <Box
@@ -180,13 +207,16 @@ export default function Map() {
                     </Grid>
                   </Grid>
                   <Grid item>
-                    <Button onClick={() => findMyLocation(setSelected, map)}>
-                      <MyLocationIcon
-                        sx={{
-                          color: "black",
-                        }}
-                      />
-                    </Button>
+                    <Tooltip title="Εμφάνιση της τοποθεσίας σας" placement="top">
+                      <IconButton onClick={() => findMyLocation(setSelected, map)}>
+                        <MyLocationIcon
+                          sx={{
+                            padding: "0.75rem",
+                            color: "black",
+                          }}
+                        />
+                      </IconButton>
+                    </Tooltip>
                   </Grid>
                 </Grid>
 
