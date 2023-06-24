@@ -1,12 +1,13 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import { GoogleMap, Circle, Marker } from "@react-google-maps/api";
+import { GoogleMap, Circle, Marker, MarkerClusterer } from "@react-google-maps/api";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import Places from "./Places";
 import RoomIcon from "@mui/icons-material/Room";
 import CircleIcon from "@mui/icons-material/Circle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Snackbar, Alert, Box, Button, IconButton, Tooltip } from "@mui/material";
+import { Clusterer } from "@react-google-maps/marker-clusterer";
 
 const generatePoints = (position: google.maps.LatLngLiteral) => {
   const points: Array<google.maps.LatLngLiteral> = [];
@@ -230,10 +231,16 @@ export default function Map() {
                   </Grid>
                 </Grid>
 
-                {/* display points */}
-                {points.map((point, i) => (
-                  <Marker key={i} position={new google.maps.LatLng(point)} />
-                ))}
+                {/* display points in clusters */}
+                <MarkerClusterer>
+                  {(clusterer: Clusterer) => (
+                    <>
+                      {points.map((point, i) => (
+                        <Marker key={i} position={point} clusterer={clusterer} />
+                      ))}
+                    </>
+                  )}
+                </MarkerClusterer>
 
                 {/* display selected point from user with circle */}
                 {selected && (
