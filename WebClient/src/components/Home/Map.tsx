@@ -8,6 +8,15 @@ import CircleIcon from "@mui/icons-material/Circle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Snackbar, Alert, Box, Button, IconButton, Tooltip } from "@mui/material";
 
+const generatePoints = (position: google.maps.LatLngLiteral) => {
+  const points: Array<google.maps.LatLngLiteral> = [];
+  for (let i = 0; i < 50; i++) {
+    const direction = Math.random() < 0.5 ? -4 : 4;
+    points.push({ lat: position.lat + Math.random() / direction, lng: position.lng + Math.random() / direction });
+  }
+  return points;
+};
+
 const iconDimensions = {
   height: "3rem",
   width: "3rem",
@@ -24,6 +33,7 @@ export default function Map() {
   const [noPointSelected, setNoPointSelected] = React.useState(false);
 
   const initcenter = React.useMemo(() => ({ lat: 39.0, lng: 23.5 }), []);
+  const points = React.useMemo(() => generatePoints(initcenter), []);
   const options = React.useMemo(
     () => ({
       mapId: import.meta.env.VITE_CUSTOM_MAP_ID,
@@ -220,6 +230,12 @@ export default function Map() {
                   </Grid>
                 </Grid>
 
+                {/* display points */}
+                {points.map((point, i) => (
+                  <Marker key={i} position={new google.maps.LatLng(point)} />
+                ))}
+
+                {/* display selected point from user with circle */}
                 {selected && (
                   <>
                     <Marker position={selected} />
