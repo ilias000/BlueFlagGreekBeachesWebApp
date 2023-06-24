@@ -52,6 +52,14 @@ export default function Map() {
     }),
     [selectPoint]
   );
+  const bounds = React.useMemo(() => new google.maps.LatLngBounds(), []);
+
+  React.useEffect(() => {
+    points.map((point) => bounds.extend(point));
+    if (map) {
+      map.fitBounds(bounds);
+    }
+  }, [map, points, bounds]);
 
   const handleRadiusChange = React.useCallback(() => {
     if (!circle) return;
