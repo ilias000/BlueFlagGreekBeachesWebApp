@@ -54,9 +54,7 @@ export function AuthProvider({ children }: any) {
   }, []);
 
   return (
-    <AuthContext.Provider
-      value={{ AuthData, LoginUser: LoginUser, LogoutUser: LogoutUser }}
-    >
+    <AuthContext.Provider value={{ AuthData, LoginUser: LoginUser, LogoutUser: LogoutUser }}>
       {isLoading ? (
         <>
           <AppBar position="fixed" sx={{ backgroundColor: "#1490b9" }}>

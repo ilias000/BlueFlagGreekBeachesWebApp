@@ -1,11 +1,10 @@
 import React from "react";
-import { AuthProvider } from "./components/Shared/Auth";
-import AuthContext from "./components/Shared/Auth";
+import { AuthProvider } from "./components/Secondary/Auth";
+import AuthContext from "./components/Secondary/Auth";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Admin from "./components/Admin/Admin";
-import Notifications from "./components/Notifications/Notifications";
-import NotFound from "./components/Shared/NotFound";
-import Test from "./components/Shared/Test";
+import NotFound from "./components/Secondary/NotFound";
+import Test from "./components/Secondary/Test";
 import Search from "./components/Home/Search";
 import Welcome from "./components/Home/Welcome";
 import { Navigate } from "react-router-dom";
@@ -27,9 +26,7 @@ function Views() {
         {
           // render admin page for admin
           path: "/admin",
-          element: (
-            <>{AuthData.role === "admin" ? <Admin /> : <Navigate to={"/"} />}</>
-          ),
+          element: <>{AuthData.role === "admin" ? <Admin /> : <Navigate to={"/"} />}</>,
         },
         {
           // render Welcome page for guests and search page for users
@@ -39,24 +36,7 @@ function Views() {
         {
           // render search page for guests under /search
           path: "/search",
-          element: (
-            <>
-              {AuthData.role === "anonymous" ? (
-                <Search />
-              ) : (
-                <Navigate to={"/"} />
-              )}
-            </>
-          ),
-        },
-        {
-          // render notifications page for users
-          path: "/notifications",
-          element: (
-            <>
-              {AuthData.isLoggedIn ? <Notifications /> : <Navigate to={"/"} />}
-            </>
-          ),
+          element: <>{AuthData.role === "anonymous" ? <Search /> : <Navigate to={"/"} />}</>,
         },
         {
           // test page for quickly testing css and javascript
