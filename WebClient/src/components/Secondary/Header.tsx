@@ -1,19 +1,16 @@
 import React from "react";
-import CloseIcon from "@mui/icons-material/Close";
-import SignIn from "./SignIn";
-import SignUp from "./SignUp";
 import { Link } from "react-router-dom";
 import AuthContext from "./Auth";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, Modal, Tabs, Tab, Typography, MenuItem, Menu, Grid, Button, Toolbar, AppBar } from "@mui/material";
 import "../../css/index.css";
+import LoginAndRegister from "./LoginAndRegister";
 
 export default function Header() {
   const [openModal, setOpenModal] = React.useState(false);
   const [navMenu, setNavMenu] = React.useState<null | HTMLElement>(null);
   const [userMenu, setUserMenu] = React.useState<null | HTMLElement>(null);
-  const [tab, setTab] = React.useState(0);
   const { AuthData, LogoutUser } = React.useContext(AuthContext);
 
   const userProfile = React.useCallback(() => {
@@ -133,50 +130,7 @@ export default function Header() {
           )}
         </Toolbar>
       </AppBar>
-      <Modal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        aria-labelledby="modal-signin-signup"
-        aria-describedby="modal-signin-signup-desc"
-        sx={{ display: "flex" }}
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "80vw",
-            maxWidth: "550px",
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <Box sx={{ justifyContent: "space-between" }}>
-            <Tabs
-              value={tab}
-              onChange={(e, newtab) => setTab(newtab)}
-              aria-label="basic tabs example"
-              variant="fullWidth"
-            >
-              <Tab label="ΣΥΝΔΕΣΗ" />
-              <Tab label="ΕΓΓΡΑΦΗ" />
-            </Tabs>
-          </Box>
-          <Box>
-            {tab === 0 && <SignIn setOpen={setOpenModal} />}
-            {tab === 1 && <SignUp setOpen={setOpenModal} />}
-          </Box>
-
-          <Box sx={{ position: "absolute", top: "0.2rem", right: "0.2rem" }}>
-            <Button onClick={() => setOpenModal(false)}>
-              <CloseIcon></CloseIcon>
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
+      <LoginAndRegister openModal={openModal} setOpenModal={setOpenModal} />
     </>
   );
 }
