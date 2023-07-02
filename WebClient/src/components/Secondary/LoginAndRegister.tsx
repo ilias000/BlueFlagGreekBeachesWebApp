@@ -13,6 +13,17 @@ const validateEmail = (email: string): boolean => {
   return emailRegex.test(email);
 };
 
+const handleInputChange = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  setFormData: React.Dispatch<React.SetStateAction<any>>
+) => {
+  const { name, value } = e.target;
+  setFormData((prevFormData: any) => ({
+    ...prevFormData,
+    [name]: value,
+  }));
+};
+
 function SignIn(props: SignInUpProps) {
   const { LoginUser } = React.useContext(AuthContext);
   const [formData, setFormData] = React.useState({
@@ -36,14 +47,6 @@ function SignIn(props: SignInUpProps) {
     [formData]
   );
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
-
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -58,9 +61,14 @@ function SignIn(props: SignInUpProps) {
               sx={{ width: "100%" }}
               name="email"
               value={formData.email}
-              error={!!emailError}
+              error={Boolean(emailError)}
               helperText={emailError}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                handleInputChange(e, setFormData);
+                if (formData.email.length === 0) {
+                  setEmailError("");
+                }
+              }}
             />
           </Grid>
           <Grid item>
@@ -71,7 +79,7 @@ function SignIn(props: SignInUpProps) {
               sx={{ width: "100%" }}
               name="password"
               value={formData.password}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange(e, setFormData)}
             />
           </Grid>
           <Grid item>
@@ -91,18 +99,96 @@ function SignIn(props: SignInUpProps) {
 }
 
 function SignUp(props: SignInUpProps) {
-  const handleSubmit = React.useCallback((e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // axios call to register api endpoint
-    props.setOpen(false);
-  }, []);
+  const [formData, setFormData] = React.useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [emailError, setEmailError] = React.useState("");
+  const [passwordError, setPasswordError] = React.useState("");
+
+  const handleSubmit = React.useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      if (!validateEmail(formData.email)) {
+        setEmailError("Mη έγκυρο email");
+        return;
+      }
+      if (formData.password !== formData.confirmPassword) {
+        setPasswordError("Oι κωδικοί δεν ταιριάζουν");
+        return;
+      }
+      setEmailError("");
+      props.setOpen(false);
+    },
+    [formData]
+  );
 
   return (
     <form onSubmit={handleSubmit}>
-      <p>Φόρμα εγγραφής</p>
-      <Button variant="contained" color="primary" type="submit" sx={{ textTransform: "none ! important" }}>
-        Εγγραφή
-      </Button>
+      <Grid container direction="column" alignContent="center" rowSpacing={3} mt={3}>
+        <Grid item>
+          <Typography>Συμπληρώστε τα στοιχεία εγγραφής</Typography>
+        </Grid>
+        <Grid item>
+          <TextField
+            label="email"
+            variant="outlined"
+            sx={{ width: "100%" }}
+            name="email"
+            value={formData.email}
+            error={Boolean(emailError)}
+            helperText={emailError}
+            onChange={(e) => {
+              handleInputChange(e, setFormData);
+              if (formData.email.length === 0) {
+                setEmailError("");
+              }
+            }}
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            label="Κωδικός"
+            type="password"
+            variant="outlined"
+            sx={{ width: "100%" }}
+            name="password"
+            value={formData.password}
+            error={Boolean(passwordError)}
+            helperText={passwordError}
+            onChange={(e) => {
+              handleInputChange(e, setFormData);
+              if (formData.password.length === 0) {
+                setPasswordError("");
+              }
+            }}
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            label="Επιβεβαίωση Κωδικού"
+            type="password"
+            variant="outlined"
+            sx={{ width: "100%" }}
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            error={Boolean(passwordError)}
+            helperText={passwordError}
+            onChange={(e) => handleInputChange(e, setFormData)}
+          />
+        </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            sx={{ textTransform: "none !important", width: "50%" }}
+          >
+            Εγγραφή
+          </Button>
+        </Grid>
+      </Grid>
     </form>
   );
 }
