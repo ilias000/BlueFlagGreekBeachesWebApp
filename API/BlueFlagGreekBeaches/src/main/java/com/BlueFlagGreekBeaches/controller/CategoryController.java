@@ -19,9 +19,8 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping(path="/all")
+    @GetMapping("/all")
     public List<GetCategoryDto> getAllCategories() {
         return categoryService.getAllCategories();
     }
-
 }

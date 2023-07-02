@@ -89,7 +89,7 @@ public class CSVHelper
         }
     }
 
-     //Returns an int from a String or -1 if the String is not an int.
+    // Returns an int from a String or -1 if the String is not an int.
     private static int tryParseInt(String value) {
         try {
             return Integer.parseInt(value);
