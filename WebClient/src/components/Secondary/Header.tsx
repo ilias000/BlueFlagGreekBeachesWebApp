@@ -3,28 +3,25 @@ import { Link } from "react-router-dom";
 import AuthContext from "./Auth";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, Modal, Tabs, Tab, Typography, MenuItem, Menu, Grid, Button, Toolbar, AppBar } from "@mui/material";
+import { Box, Typography, MenuItem, Menu, Grid, Button, Toolbar, AppBar } from "@mui/material";
 import "../../css/index.css";
 import LoginAndRegister from "./LoginAndRegister";
+
+const RouteButton = ({ label, route, color }: { label: string; route: string; color: string }) => {
+  return (
+    <Link to={route}>
+      <Typography variant="body1" color={color}>
+        {label}
+      </Typography>
+    </Link>
+  );
+};
 
 export default function Header() {
   const [openModal, setOpenModal] = React.useState(false);
   const [navMenu, setNavMenu] = React.useState<null | HTMLElement>(null);
   const [userMenu, setUserMenu] = React.useState<null | HTMLElement>(null);
   const { AuthData, LogoutUser } = React.useContext(AuthContext);
-
-  const userProfile = React.useCallback(() => {
-    return (
-      <Grid>
-        <button
-          onClick={(e: React.MouseEvent<HTMLButtonElement>) => setUserMenu(e.currentTarget)}
-          style={{ backgroundColor: "inherit", padding: 0 }}
-        >
-          <AccountCircleIcon></AccountCircleIcon>
-        </button>
-      </Grid>
-    );
-  }, []);
 
   return (
     <>
@@ -46,45 +43,55 @@ export default function Header() {
           </Grid>
 
           {/* Display appbar contents above xs device width and use dynamic display based on log-in status */}
-          <Grid
-            container
-            columnGap={3}
-            justifyContent="flex-end"
-            sx={{ "@media (max-width: 600px)": { display: "none" } }}
-          >
+          <Grid container columnGap={3} justifyContent="flex-end" alignItems="center">
             {AuthData.isLoggedIn ? (
-              <>{userProfile()}</>
-            ) : (
               <>
-                <Grid display="flex" alignItems="center">
-                  <Link to={"/search"}>
-                    <Typography variant="body1" color="white">
-                      Αναζήτηση
-                    </Typography>
-                  </Link>
-                </Grid>
-                <Grid>
-                  <Button
-                    onClick={() => setOpenModal(true)}
-                    variant="contained"
-                    sx={{
-                      color: "var(--on-primary-container)",
-                      backgroundColor: "var(--primary-container)",
-                      ":hover": {
-                        color: "var(--on-secondary)",
-                        backgroundColor: "var(--secondary)",
-                      },
-                      textTransform: "none !important",
-                    }}
+                {AuthData.role === "admin" && (
+                  <Grid item>
+                    <RouteButton label="Διαχείριση" route="/admin" color="white" />
+                  </Grid>
+                )}
+                <Grid item>
+                  <button
+                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => setUserMenu(e.currentTarget)}
+                    style={{ backgroundColor: "inherit", padding: 0 }}
                   >
-                    Σύνδεση
-                  </Button>
+                    <AccountCircleIcon></AccountCircleIcon>
+                  </button>
+                  <Menu open={Boolean(userMenu)} anchorEl={userMenu} onClose={() => setUserMenu(null)}>
+                    <MenuItem onClick={LogoutUser}>logout</MenuItem>
+                  </Menu>
                 </Grid>
               </>
+            ) : (
+              <Grid item sx={{ "@media (max-width: 600px)": { display: "none" } }}>
+                <Grid container columnGap={3} justifyContent="flex-end" alignItems="center">
+                  <Grid item>
+                    <RouteButton label="Αναζήτηση" route="/search" color="white" />
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      onClick={() => setOpenModal(true)}
+                      variant="contained"
+                      sx={{
+                        color: "var(--on-primary-container)",
+                        backgroundColor: "var(--primary-container)",
+                        ":hover": {
+                          color: "var(--on-secondary)",
+                          backgroundColor: "var(--secondary)",
+                        },
+                        textTransform: "none !important",
+                      }}
+                    >
+                      Σύνδεση
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Grid>
             )}
           </Grid>
 
-          {/* Collapse appbar contents on xs devices. There is no need to collapse for logged in users*/}
+          {/* Collapse appbar contents on xs devices */}
           {!AuthData.isLoggedIn && (
             <>
               <Button
@@ -99,11 +106,7 @@ export default function Header() {
 
               <Menu open={Boolean(navMenu)} anchorEl={navMenu} onClose={() => setNavMenu(null)}>
                 <MenuItem>
-                  <Link to={"/search"}>
-                    <Typography variant="body1" color="black">
-                      Αναζήτηση
-                    </Typography>
-                  </Link>
+                  <RouteButton label="Αναζήτηση" route="/search" color="black" />
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
@@ -113,18 +116,6 @@ export default function Header() {
                 >
                   Σύνδεση
                 </MenuItem>
-              </Menu>
-            </>
-          )}
-
-          {/* Display user icon if user is logged in */}
-          {AuthData.isLoggedIn && (
-            <>
-              <Grid container justifyContent="flex-end" sx={{ "@media (min-width: 601px)": { display: "none" } }}>
-                {userProfile()}
-              </Grid>
-              <Menu open={Boolean(userMenu)} anchorEl={userMenu} onClose={() => setUserMenu(null)}>
-                <MenuItem onClick={LogoutUser}>logout</MenuItem>
               </Menu>
             </>
           )}

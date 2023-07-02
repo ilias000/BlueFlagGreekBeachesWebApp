@@ -26,7 +26,7 @@ export function AuthProvider({ children }: any) {
       setAuthData({
         user_id: "01",
         email: "giannis@gmail.com",
-        role: "user",
+        role: "admin",
         isLoggedIn: true,
       });
     }
@@ -39,7 +39,7 @@ export function AuthProvider({ children }: any) {
     setAuthData({
       user_id: "01",
       email: "giannis@gmail.com",
-      role: "user",
+      role: "admin",
       isLoggedIn: true,
     });
   }, []);
