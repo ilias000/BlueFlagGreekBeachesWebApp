@@ -87,3 +87,13 @@ button:focus-visible {
 .MuiButton {
   text-transform: none !important;
 }
+
+.CustomFooter {
+  background-color: var(--secondary);
+  color: white;
+  padding-top: 1rem;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  margin: 5rem 0 0 0;
+}
