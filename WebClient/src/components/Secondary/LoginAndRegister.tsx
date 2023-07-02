@@ -50,7 +50,7 @@ function SignIn(props: SignInUpProps) {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Grid container direction="column" alignContent="center" rowSpacing={3} mt={3}>
+        <Grid container direction="column" alignContent="center" rowSpacing={2} mt={3}>
           <Grid item>
             <Typography>Συμπληρώστε τα στοιχεία σύνδεσης</Typography>
           </Grid>
@@ -126,7 +126,7 @@ function SignUp(props: SignInUpProps) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container direction="column" alignContent="center" rowSpacing={3} mt={3}>
+      <Grid container direction="column" alignContent="center" rowSpacing={2} mt={3}>
         <Grid item>
           <Typography>Συμπληρώστε τα στοιχεία εγγραφής</Typography>
         </Grid>
