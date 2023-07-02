@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Box, Tabs, Tab, Button } from "@mui/material";
+import { Modal, Box, Tabs, Tab, Button, Grid, Typography, TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import AuthContext from "./Auth";
 
@@ -7,22 +7,84 @@ interface SignInUpProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const validateEmail = (email: string): boolean => {
+  // Email regex pattern for basic email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 function SignIn(props: SignInUpProps) {
   const { LoginUser } = React.useContext(AuthContext);
+  const [formData, setFormData] = React.useState({
+    email: "",
+    password: "",
+  });
+  const [emailError, setEmailError] = React.useState("");
 
-  const handleSubmit = React.useCallback((e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    LoginUser(e);
-    props.setOpen(false);
-  }, []);
+  const handleSubmit = React.useCallback(
+    (e: React.FormEvent<HTMLFormElement>): void => {
+      e.preventDefault();
+      console.log("email: " + formData.email + "\npassword: " + formData.password);
+      if (!validateEmail(formData.email)) {
+        setEmailError("Μη έγκυρο email");
+        return;
+      }
+      setEmailError(""); // clear any previous errors
+      LoginUser();
+      props.setOpen(false);
+    },
+    [formData]
+  );
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
 
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <p>Φόρμα σύνδεσης</p>
-        <Button variant="contained" color="primary" type="submit" sx={{ textTransform: "none !important" }}>
-          Σύνδεση
-        </Button>
+        <Grid container direction="column" alignContent="center" rowSpacing={3} mt={3}>
+          <Grid item>
+            <Typography>Συμπληρώστε τα στοιχεία σύνδεσης</Typography>
+          </Grid>
+          <Grid item>
+            <TextField
+              label="email"
+              variant="outlined"
+              sx={{ width: "100%" }}
+              name="email"
+              value={formData.email}
+              error={!!emailError}
+              helperText={emailError}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              label="Κωδικός"
+              type="password"
+              variant="outlined"
+              sx={{ width: "100%" }}
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+            />
+          </Grid>
+          <Grid item>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              sx={{ textTransform: "none !important", width: "50%" }}
+            >
+              Σύνδεση
+            </Button>
+          </Grid>
+        </Grid>
       </form>
     </>
   );
@@ -76,7 +138,7 @@ export default function LoginAndRegister(props: LoginAndRegisterProps) {
             p: 4,
           }}
         >
-          <Box sx={{ justifyContent: "space-between" }}>
+          <Box sx={{ justifyContent: "space-between", mt: 2 }}>
             <Tabs
               value={tab}
               onChange={(e, newtab) => setTab(newtab)}
