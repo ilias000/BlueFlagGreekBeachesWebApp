@@ -98,7 +98,9 @@ const Footer = () => {
           </Grid>
         </Grid>
         <Divider variant="middle" sx={dividerStyles} />
-        <small style={{ textAlign: "center" }}>Copyright &copy; {new Date().getFullYear()} WeDontByte</small>
+        <Grid container justifyContent="center" alignItems="center">
+          <small>Copyright &copy; {new Date().getFullYear()} WeDontByte</small>
+        </Grid>
       </footer>
     </>
   );
