@@ -29,9 +29,10 @@ const dividerStyles = {
 
 const Footer = () => {
   const [openModal, setOpenModal] = React.useState(false);
+  const [tab, setTab] = React.useState<"login" | "register">("login");
   return (
     <>
-      <LoginAndRegister openModal={openModal} setOpenModal={setOpenModal} />
+      {openModal && <LoginAndRegister openModal={openModal} setOpenModal={setOpenModal} inputTab={tab} />}
       <footer className="CustomFooter">
         <Grid
           container
@@ -52,12 +53,24 @@ const Footer = () => {
                 </Link>
               </Grid>
               <Grid item>
-                <Link to="/" onClick={() => setOpenModal(true)}>
+                <Link
+                  to="/"
+                  onClick={() => {
+                    setOpenModal(true);
+                    setTab("login");
+                  }}
+                >
                   <Typography sx={linkStyles}>Σύνδεση</Typography>
                 </Link>
               </Grid>
               <Grid item>
-                <Link to="#" onClick={() => setOpenModal(true)}>
+                <Link
+                  to="/"
+                  onClick={() => {
+                    setOpenModal(true);
+                    setTab("register");
+                  }}
+                >
                   <Typography sx={linkStyles}>Εγγραφή</Typography>
                 </Link>
               </Grid>

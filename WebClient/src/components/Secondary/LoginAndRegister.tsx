@@ -196,10 +196,19 @@ function SignUp(props: SignInUpProps) {
 interface LoginAndRegisterProps {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  inputTab: "login" | "register";
 }
 
 export default function LoginAndRegister(props: LoginAndRegisterProps) {
   const [tab, setTab] = React.useState(0);
+
+  React.useEffect(() => {
+    if (props.inputTab === "register") {
+      setTab(1);
+    } else {
+      setTab(0);
+    }
+  }, []);
 
   return (
     <>

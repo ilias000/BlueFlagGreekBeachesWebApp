@@ -121,7 +121,7 @@ export default function Header() {
           )}
         </Toolbar>
       </AppBar>
-      <LoginAndRegister openModal={openModal} setOpenModal={setOpenModal} />
+      {openModal && <LoginAndRegister openModal={openModal} setOpenModal={setOpenModal} inputTab="login" />}
     </>
   );
 }

@@ -49,7 +49,7 @@ export default function Welcome() {
               <Grid container direction="row" columnGap={3}>
                 <Grid item xs={12} sm={6}>
                   <Typography variant="h5">Αναζητήστε για περιοχές που σας ενδιαφέρουν</Typography>
-                  <Typography variant="body1" mt={3}>
+                  <Typography variant="body1" align="justify" mt={3}>
                     Από την σελίδα αναζήτησης μπορείτε να βρείτε τις ακτές που έχουν βραβευτεί με γαλάζια σημαία στις
                     περιοχές που σας ενδιαφέρουν. Πιο συγκεκριμένα, μπορείτε να επιλέξετε τον Νομό και Δήμο για τους
                     οποίους θέλετε να αναζητήσετε παραλίες.
@@ -65,7 +65,7 @@ export default function Welcome() {
                 <Grid item xs={12} sm={6}></Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography variant="h5">Λάβετε Ενημερώσεις</Typography>
-                  <Typography variant="body1" mt={3}>
+                  <Typography variant="body1" align="justify" mt={3}>
                     Αν είστε χρήστης της εφαρμογής έχετε τη δυνατότητα να επιλέξετε συγκεκριμενές περιοχές για τις
                     οποίες θέλετε να λαμβάνετε ενημερώσεις. Καθώς πραγματοποιείτε αναζητήσεις μεταβείτε στον χάρτη,
                     περιηγηθείτε στην τοποθεσία που σας ενδιαφέρει μέσω της αναζήτησης και πατήστε κλικ σε ένα σημείο
@@ -73,7 +73,9 @@ export default function Welcome() {
                     στο κουμπί αποθήκευσης.
                   </Typography>
                   <Button
-                    onClick={() => setOpenModal(true)}
+                    onClick={() => {
+                      setOpenModal(true);
+                    }}
                     variant="contained"
                     sx={{
                       mt: 5,
@@ -94,7 +96,7 @@ export default function Welcome() {
           </Grid>
         </Grid>
       </Grid>
-      <LoginAndRegister openModal={openModal} setOpenModal={setOpenModal} />
+      {openModal && <LoginAndRegister openModal={openModal} setOpenModal={setOpenModal} inputTab={"register"} />}
       <Footer />
     </>
   );
