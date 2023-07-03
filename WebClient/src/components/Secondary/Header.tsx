@@ -70,19 +70,7 @@ export default function Header() {
                     <RouteButton label="Αναζήτηση" route="/search" color="white" />
                   </Grid>
                   <Grid item>
-                    <Button
-                      onClick={() => setOpenModal(true)}
-                      variant="contained"
-                      sx={{
-                        color: "var(--on-primary-container)",
-                        backgroundColor: "var(--primary-container)",
-                        ":hover": {
-                          color: "var(--on-secondary)",
-                          backgroundColor: "var(--secondary)",
-                        },
-                        textTransform: "none !important",
-                      }}
-                    >
+                    <Button onClick={() => setOpenModal(true)} variant="contained" className="CustomPrimaryButton">
                       Σύνδεση
                     </Button>
                   </Grid>

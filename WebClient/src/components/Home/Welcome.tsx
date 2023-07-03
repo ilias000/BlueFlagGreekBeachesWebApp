@@ -27,18 +27,7 @@ export default function Welcome() {
                 </Grid>
                 <Grid item>
                   <Link to="/search">
-                    <Button
-                      variant="contained"
-                      sx={{
-                        color: "var(--on-primary-container)",
-                        backgroundColor: "var(--primary-container)",
-                        ":hover": {
-                          color: "var(--on-secondary)",
-                          backgroundColor: "var(--secondary)",
-                        },
-                        textTransform: "none !important",
-                      }}
-                    >
+                    <Button variant="contained" className="CustomPrimaryButton">
                       Ξεκινήστε εδώ
                     </Button>
                   </Link>
@@ -77,16 +66,8 @@ export default function Welcome() {
                       setOpenModal(true);
                     }}
                     variant="contained"
-                    sx={{
-                      mt: 5,
-                      color: "var(--on-primary-color)",
-                      backgroundColor: "var(--primary-color)",
-                      ":hover": {
-                        color: "var(--primary-container)",
-                        backgroundColor: "var(--on-primary-container)",
-                      },
-                      textTransform: "none !important",
-                    }}
+                    className="CustomSecondaryButton"
+                    sx={{ mt: 3 }}
                   >
                     Εγγραφή Τώρα
                   </Button>
