@@ -225,9 +225,16 @@ export default function Map() {
                               <ListItemText primary={"Σημείο " + i} secondary="περιγραφή" />
                             </ListItem>
                           ))}
-                          <ListItem>
-                            <Pagination count={10} defaultPage={1} siblingCount={0} color="primary" />
-                          </ListItem>
+                          {points.length / 5 > 1 && (
+                            <ListItem>
+                              <Pagination
+                                count={Math.ceil(points.length / 5)}
+                                defaultPage={1}
+                                siblingCount={0}
+                                color="primary"
+                              />
+                            </ListItem>
+                          )}
                         </>
                       </List>
                     </Paper>
