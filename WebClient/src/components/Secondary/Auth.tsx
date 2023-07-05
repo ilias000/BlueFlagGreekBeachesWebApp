@@ -4,7 +4,7 @@ import { AppBar, Toolbar } from "@mui/material";
 
 const AuthContext = React.createContext({
   AuthData: { user_id: "", email: "", role: "anonymous", isLoggedIn: false },
-  LoginUser: (e: React.FormEvent) => {},
+  LoginUser: () => {},
   LogoutUser: () => {},
 });
 
@@ -26,20 +26,19 @@ export function AuthProvider({ children }: any) {
       setAuthData({
         user_id: "01",
         email: "giannis@gmail.com",
-        role: "user",
+        role: "admin",
         isLoggedIn: true,
       });
     }
     setIsLoading(false);
   }, []);
 
-  const LoginUser = React.useCallback((e: React.FormEvent) => {
-    e.preventDefault();
+  const LoginUser = React.useCallback(() => {
     // axios call with form data
     setAuthData({
       user_id: "01",
       email: "giannis@gmail.com",
-      role: "user",
+      role: "admin",
       isLoggedIn: true,
     });
   }, []);

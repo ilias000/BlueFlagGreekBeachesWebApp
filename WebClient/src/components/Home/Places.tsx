@@ -68,7 +68,7 @@ export default function Places({ setSelected, map }: PlacesProps) {
         onClose={() => setNotFound(false)}
       >
         <Alert severity="error" onClose={() => setNotFound(false)}>
-          Η περιοχή δεν βρέθηκε
+          Η τοποθεσία δεν βρέθηκε
         </Alert>
       </Snackbar>
       <Autocomplete
@@ -86,7 +86,7 @@ export default function Places({ setSelected, map }: PlacesProps) {
             {...params}
             value={value}
             disabled={!ready}
-            placeholder="Αναζήτηση περιοχής"
+            placeholder="Αναζήτηση τοποθεσίας"
             onChange={(e) => setValue(e.target.value)}
           />
         )}

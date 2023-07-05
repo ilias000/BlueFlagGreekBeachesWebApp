@@ -14,7 +14,6 @@
 
   margin: 0;
   padding: 0;
-  text-align: center;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -84,6 +83,35 @@ button:focus-visible {
   }
 }
 
-.MuiButton {
+.CustomPrimaryButton{
+  color: var(--on-primary-container) !important;
+  background-color: var(--primary-container) !important;
   text-transform: none !important;
+}
+
+.CustomPrimaryButton:hover {
+  color: var(--on-secondary) !important;
+  background-color: var(--secondary) !important;
+}
+
+.CustomSecondaryButton {
+  color: var(--on-primary-color) !important;
+  background-color: var(--primary-color) !important;
+  text-transform: none !important;
+}
+
+.CustomSecondaryButton:hover {
+  color: var(--primary-container) !important;
+  background-color: var(--on-primary-container) !important;
+}
+
+.CustomFooter {
+  background-color: var(--secondary);
+  color: white;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  margin: 5rem 0 0 0;
 }

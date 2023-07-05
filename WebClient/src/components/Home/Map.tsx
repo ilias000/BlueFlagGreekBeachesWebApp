@@ -1,17 +1,17 @@
 import React from "react";
-import { Grid } from "@mui/material";
+import { Grid, List, ListItem, ListItemText, Paper } from "@mui/material";
 import { GoogleMap, Circle, Marker, MarkerClusterer } from "@react-google-maps/api";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import Places from "./Places";
 import RoomIcon from "@mui/icons-material/Room";
 import CircleIcon from "@mui/icons-material/Circle";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Snackbar, Alert, Box, Button, IconButton, Tooltip } from "@mui/material";
+import { Snackbar, Alert, Box, Pagination, IconButton, Tooltip } from "@mui/material";
 import { Clusterer } from "@react-google-maps/marker-clusterer";
 
 const generatePoints = (position: google.maps.LatLngLiteral) => {
   const points: Array<google.maps.LatLngLiteral> = [];
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 10; i++) {
     const direction = Math.random() < 0.5 ? -4 : 4;
     points.push({ lat: position.lat + Math.random() / direction, lng: position.lng + Math.random() / direction });
   }
@@ -190,7 +190,7 @@ export default function Map() {
           <GoogleMap
             mapContainerStyle={{
               width: "90vw",
-              height: "70vh",
+              height: "80vh",
             }}
             center={initcenter}
             zoom={8}
@@ -203,7 +203,7 @@ export default function Map() {
           >
             {mapLoaded && (
               <>
-                <Grid container position="relative" mt={3} ml={3}>
+                <Grid container position="relative" width="fit-content" mt={3} ml={3}>
                   <Grid item>
                     <Places setSelected={setSelected} map={map}></Places>
                   </Grid>
@@ -213,12 +213,39 @@ export default function Map() {
                     </Grid>
                   </Grid>
                 </Grid>
+                <Grid container position="absolute" width="20rem" maxWidth="70vw" mt={3} ml={3}>
+                  <Grid item>
+                    <Paper variant="outlined">
+                      <List
+                        sx={{ width: "20rem", maxWidth: "70vw", bgcolor: "background.paper", paddingBottom: "0.5rem" }}
+                      >
+                        <>
+                          {points.slice(0, 5).map((point, i) => (
+                            <ListItem key={i}>
+                              <ListItemText primary={"Σημείο " + i} secondary="περιγραφή" />
+                            </ListItem>
+                          ))}
+                          {points.length / 5 > 1 && (
+                            <ListItem>
+                              <Pagination
+                                count={Math.ceil(points.length / 5)}
+                                defaultPage={1}
+                                siblingCount={0}
+                                color="primary"
+                              />
+                            </ListItem>
+                          )}
+                        </>
+                      </List>
+                    </Paper>
+                  </Grid>
+                </Grid>
 
                 <Grid
                   container
                   direction="column"
                   alignItems={"flex-end"}
-                  sx={{ position: "absolute", bottom: "8rem" }}
+                  sx={{ position: "absolute", bottom: "8rem", right: 0, width: "fit-content" }}
                 >
                   <Grid item sx={{ "@media (min-width: 601px)": { display: "none" }, marginBottom: "3rem" }}>
                     <Grid container direction={"column"}>
