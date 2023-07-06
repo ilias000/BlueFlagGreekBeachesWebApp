@@ -2,7 +2,7 @@ package com.BlueFlagGreekBeaches.service.impl;
 
 import com.BlueFlagGreekBeaches.dto.pointOfInterest.ResponsePointOfInterest;
 import com.BlueFlagGreekBeaches.entity.PointOfInterest;
-import com.BlueFlagGreekBeaches.entity.SearchFilter;
+import com.BlueFlagGreekBeaches.dto.pointOfInterest.SearchFilter;
 import com.BlueFlagGreekBeaches.repository.PointOfInterestRepository;
 import com.BlueFlagGreekBeaches.service.PointOfInterestService;
 import jakarta.persistence.EntityManager;
