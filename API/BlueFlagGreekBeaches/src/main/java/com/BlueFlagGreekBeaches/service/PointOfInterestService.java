@@ -1,7 +1,7 @@
 package com.BlueFlagGreekBeaches.service;
 
 import com.BlueFlagGreekBeaches.dto.pointOfInterest.ResponsePointOfInterest;
-import com.BlueFlagGreekBeaches.entity.SearchFilter;
+import com.BlueFlagGreekBeaches.dto.pointOfInterest.SearchFilter;
 import java.util.List;
 
 public interface PointOfInterestService {

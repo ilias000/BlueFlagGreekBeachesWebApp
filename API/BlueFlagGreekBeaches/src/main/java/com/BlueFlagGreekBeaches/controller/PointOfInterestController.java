@@ -2,8 +2,8 @@ package com.BlueFlagGreekBeaches.controller;
 
 import com.BlueFlagGreekBeaches.dto.pointOfInterest.ResponsePointOfInterest;
 import com.BlueFlagGreekBeaches.dto.pointOfInterest.SearchResponsePoints;
-import com.BlueFlagGreekBeaches.entity.SearchFilter;
-import com.BlueFlagGreekBeaches.entity.SearchRequest;
+import com.BlueFlagGreekBeaches.dto.pointOfInterest.SearchFilter;
+import com.BlueFlagGreekBeaches.dto.pointOfInterest.SearchRequest;
 import com.BlueFlagGreekBeaches.service.PointOfInterestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
