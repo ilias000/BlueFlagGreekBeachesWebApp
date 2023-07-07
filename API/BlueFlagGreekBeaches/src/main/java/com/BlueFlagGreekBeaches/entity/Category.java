@@ -25,10 +25,10 @@ public class Category
     @Column(name = "id", nullable = false)
     private UUID id;
 
-    @Column(name = "category_id", nullable = false)
+    @Column(name = "category_id", unique = true, nullable = false)
     private int categoryId;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @ManyToMany(mappedBy = "categories")
