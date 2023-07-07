@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SaveSearchRepository extends JpaRepository<SaveSearch, UUID>
 {
-    @Query("SELECT s FROM SaveSearch s WHERE s.keywords = ?1 AND s.categoryIds = ?2 AND s.lat = ?3 AND s.lon = ?4 AND s.km = ?5")
-    SaveSearch findSaveSearch(List<String> keywords, List<Integer> categoryIds, double lat, double lon, int km);
+    @Query("SELECT s FROM SaveSearch s WHERE s.title = :title AND s.text = :text AND s.keywords = :keywords AND s.categoryIds = :categoryIds AND s.lat = :lat AND s.lon = :lon AND s.km = :km")
+    SaveSearch findSaveSearch(String title, String text, List<String> keywords, List<Integer> categoryIds, double lat, double lon, int km);
 }

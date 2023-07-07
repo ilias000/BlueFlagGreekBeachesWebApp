@@ -53,8 +53,10 @@ public class SaveSearch
             inverseJoinColumns = @JoinColumn(name = "users_id"))
     private List<User> users = new ArrayList<>();
 
-    public SaveSearch(List<String> keywords, List<Integer> categoryIds, double lat, double lon, int km)
+    public SaveSearch(String title, String text, List<String> keywords, List<Integer> categoryIds, double lat, double lon, int km)
     {
+        this.title = title;
+        this.text = text;
         this.keywords = keywords;
         this.categoryIds = categoryIds;
         this.lat = lat;
