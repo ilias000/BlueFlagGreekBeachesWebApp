@@ -11,9 +11,11 @@ import com.BlueFlagGreekBeaches.dto.saveSearch.SaveSearchResponseDto;
 import com.BlueFlagGreekBeaches.service.PointOfInterestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -49,7 +51,7 @@ public class PointOfInterestController {
     }
 
     @PostMapping("/saveSearch")
-    public ResponseEntity<SaveSearchResponseDto> saveSearch(@RequestBody AddSaveSearchDto addSaveSearchDto, @RequestBody String email)
+    public ResponseEntity<SaveSearchResponseDto> saveSearch(@RequestBody AddSaveSearchDto addSaveSearchDto, @RequestParam String email)
     {
         return pointOfInterestService.saveSearch(addSaveSearchDto, email);
     }

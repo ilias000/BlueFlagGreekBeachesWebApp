@@ -4,6 +4,7 @@ import com.BlueFlagGreekBeaches.dto.pointOfInterest.ResponsePointOfInterest;
 import com.BlueFlagGreekBeaches.dto.saveSearch.AddSaveSearchDto;
 import com.BlueFlagGreekBeaches.dto.saveSearch.GetSaveSearchDto;
 import com.BlueFlagGreekBeaches.dto.saveSearch.SaveSearchResponseDto;
+import com.BlueFlagGreekBeaches.dto.user.GetUserDto;
 import com.BlueFlagGreekBeaches.entity.PointOfInterest;
 import com.BlueFlagGreekBeaches.dto.pointOfInterest.SearchFilter;
 import com.BlueFlagGreekBeaches.entity.SaveSearch;
@@ -94,7 +95,7 @@ public class PointOfInterestServiceImpl implements PointOfInterestService {
 
     public ResponseEntity<SaveSearchResponseDto> saveSearch(AddSaveSearchDto addSaveSearchDto, String email)
     {
-        if(addSaveSearchDto.keywords().isEmpty() && addSaveSearchDto.categoryIds().isEmpty() && addSaveSearchDto.lat() == 0 && addSaveSearchDto.lon() == 0 && addSaveSearchDto.km() == 0)
+        if(addSaveSearchDto.title().isEmpty() && addSaveSearchDto.text().isEmpty() && addSaveSearchDto.keywords().isEmpty() && addSaveSearchDto.categoryIds().isEmpty() && addSaveSearchDto.lat() == 0 && addSaveSearchDto.lon() == 0 && addSaveSearchDto.km() == 0)
         {
             return ResponseEntity.badRequest().body(new SaveSearchResponseDto(null, "All fields are empty"));
         }
@@ -105,16 +106,20 @@ public class PointOfInterestServiceImpl implements PointOfInterestService {
             return ResponseEntity.badRequest().body(new SaveSearchResponseDto(null, "User does not exist"));
         }
 
-        SaveSearch existedSaveSearch = saveSearchRepository.findSaveSearch(addSaveSearchDto.keywords(), addSaveSearchDto.categoryIds(), addSaveSearchDto.lat(), addSaveSearchDto.lon(), addSaveSearchDto.km());
+        SaveSearch existedSaveSearch = saveSearchRepository.findSaveSearch(addSaveSearchDto.title(), addSaveSearchDto.text(), addSaveSearchDto.keywords(), addSaveSearchDto.categoryIds(), addSaveSearchDto.lat(), addSaveSearchDto.lon(), addSaveSearchDto.km());
         if(existedSaveSearch == null)
         {
-            SaveSearch saveSearch = new SaveSearch(addSaveSearchDto.keywords(), addSaveSearchDto.categoryIds(), addSaveSearchDto.lat(), addSaveSearchDto.lon(), addSaveSearchDto.km());
+            SaveSearch saveSearch = new SaveSearch(addSaveSearchDto.title(), addSaveSearchDto.text(), addSaveSearchDto.keywords(), addSaveSearchDto.categoryIds(), addSaveSearchDto.lat(), addSaveSearchDto.lon(), addSaveSearchDto.km());
             List<User> users = new ArrayList<>();
             return updateUsersSaveSearch(user, saveSearch, users);
         }
         else
         {
             List<User> users = existedSaveSearch.getUsers();
+            if(users.contains(user))
+            {
+                return ResponseEntity.badRequest().body(new SaveSearchResponseDto(null, "Search is already saved for user with email: " + user.getEmail()));
+            }
             return updateUsersSaveSearch(user, existedSaveSearch, users);
         }
     }
@@ -125,7 +130,8 @@ public class PointOfInterestServiceImpl implements PointOfInterestService {
         users.add(user);
         existedSaveSearch.setUsers(users);
         SaveSearch response = saveSearchRepository.save(existedSaveSearch);
-        GetSaveSearchDto getSaveSearchDto = new GetSaveSearchDto(response.getTitle(), response.getText(), response.getKeywords(), response.getCategoryIds(), response.getLat(), response.getLon(), response.getKm(), response.getUsers());
+        List<GetUserDto> getUserDtoList = response.getUsers().stream().map(u -> new GetUserDto(u.getEmail(), u.getIsAdmin())).toList();
+        GetSaveSearchDto getSaveSearchDto = new GetSaveSearchDto(response.getTitle(), response.getText(), response.getKeywords(), response.getCategoryIds(), response.getLat(), response.getLon(), response.getKm(), getUserDtoList);
         return ResponseEntity.ok(new SaveSearchResponseDto(getSaveSearchDto, "Search for user with email: " + user.getEmail() + " saved successfully"));
     }
 
