@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.BlueFlagGreekBeaches.dto.category.AddCategoryDto;
 import com.BlueFlagGreekBeaches.dto.category.GetCategoryDto;
@@ -13,9 +14,11 @@ import com.BlueFlagGreekBeaches.dto.imp.ImportCategoryCSVResponseDto;
 import com.BlueFlagGreekBeaches.dto.imp.ImportPointsOfInterestCSVResponseDto;
 import com.BlueFlagGreekBeaches.entity.Category;
 import com.BlueFlagGreekBeaches.entity.PointOfInterest;
+import com.BlueFlagGreekBeaches.entity.SaveSearch;
 import com.BlueFlagGreekBeaches.helper.CSVHelper;
 import com.BlueFlagGreekBeaches.repository.CategoryRepository;
 import com.BlueFlagGreekBeaches.repository.PointOfInterestRepository;
+import com.BlueFlagGreekBeaches.repository.SaveSearchRepository;
 import com.BlueFlagGreekBeaches.service.ImportService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +31,13 @@ public class ImportServiceImpl implements ImportService
 {
     private final CategoryRepository categoryRepository;
     private final PointOfInterestRepository pointOfInterestRepository;
+    private final SaveSearchRepository searchRepository;
 
-    public ImportServiceImpl(CategoryRepository categoryRepository, PointOfInterestRepository pointOfInterestRepository)
+    public ImportServiceImpl(CategoryRepository categoryRepository, PointOfInterestRepository pointOfInterestRepository,SaveSearchRepository searchRepository)
     {
         this.categoryRepository = categoryRepository;
         this.pointOfInterestRepository = pointOfInterestRepository;
+        this.searchRepository = searchRepository;
     }
 
     // Imports points of interest from a CSV file.
@@ -75,6 +80,11 @@ public class ImportServiceImpl implements ImportService
                                                                                                                                    pointOfInterest.getLongitude(), pointOfInterest.getKeywords(),
                                                                                                                                    convertCategoryListToGetCategoryDtoList(pointOfInterest.getCategories()))).toList();
         String message = "Uploaded the file successfully: " + file.getOriginalFilename();
+        List<SaveSearch> saveSearchList = searchRepository.findAllForNonAdminUsers();
+        if ( getPointOfInterestDtoList.size()>0 && saveSearchList.size() >0 )
+        {
+            List<SaveSearch> matchPointOfInterestsToSearchCriterias =matchPointOfInterestsToSearchCriterias(getPointOfInterestDtoList,saveSearchList);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(new ImportPointsOfInterestCSVResponseDto(getPointOfInterestDtoList, message));
     }
 
@@ -176,4 +186,81 @@ public class ImportServiceImpl implements ImportService
     {
         return categoriesList.stream().map(category -> new GetCategoryDto(category.getCategoryId(), category.getName())).toList();
     }
+
+
+    public List<SaveSearch> matchPointOfInterestsToSearchCriterias(List<GetPointOfInterestDto> pointOfInterestDtoList, List<SaveSearch> saveSearchList) {
+        List<SaveSearch>  mathcingSearch = new ArrayList<>();
+        for (SaveSearch criteria : saveSearchList) {
+            System.out.println("Matching criteria: " + criteria.getTitle() + criteria.getUsers() );
+            for (GetPointOfInterestDto poi : pointOfInterestDtoList) {
+                if (matchesCriteria(poi, criteria)) {
+                    mathcingSearch.add(criteria);
+                    System.out.println("Match found: PointOfInterest ID = " + poi.description()+ criteria.getTitle() + criteria.getUsers());
+                    break;
+                }
+            }
+        }
+        return mathcingSearch;
+    }
+
+    private boolean matchesCriteria(GetPointOfInterestDto poi, SaveSearch criteria) {
+        // Compare poi attributes with criteria attributes
+        // Return true if it's a match, false otherwise
+        boolean matches = true;
+
+        // Compare text
+        if (criteria.getText() != null && !criteria.getText().isEmpty()) {
+            matches &= poi.description().toLowerCase().contains(criteria.getText().toLowerCase());
+        }
+
+        // Compare distance
+        if (criteria.getKm() > 0 && criteria.getLat() != 0 && criteria.getLat() != 0 && matches ) {
+            matches &= isWithinDistance(poi,criteria.getKm(),criteria.getLat(),criteria.getLon());
+        }
+
+        // Compare keywords
+        if (criteria.getKeywords() != null && !criteria.getKeywords().isEmpty() && matches ) {
+            matches &= poi.keywords().contains(criteria.getKeywords());
+        }
+
+        // Compare categoryIds
+        if (criteria.getCategoryIds() != null && !criteria.getCategoryIds().isEmpty() && matches ) {
+            List<GetCategoryDto> categories = poi.categories();
+            List<Integer> categoryIds = categories.stream()
+                    .map(GetCategoryDto::categoryId)
+                    .toList();
+            List<Integer> catIds = criteria.getCategoryIds();
+            List<Integer> list1Copy = new ArrayList<>(categoryIds);
+        // Retain only the common elements between list1Copy and list2
+            list1Copy.retainAll(catIds);
+
+        // Check if there is at least one common number
+            boolean hasCommonNumber = !list1Copy.isEmpty();
+            matches &= hasCommonNumber;
+        }
+
+        return matches;
+    }
+
+    private boolean isWithinDistance(GetPointOfInterestDto poi, int km, double lat,double lon) {
+         boolean withinDistance = false;
+        double R = 6378137; // Earth's mean radius in kilometers
+
+        double dLat = Math.toRadians(lat - poi.latitude());
+        double dLon = Math.toRadians(lon - poi.longitude());
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat)) * Math.cos(Math.toRadians(lat))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double d = (R * c) / 1000;// returns the distance in kilometers
+        if (d <= km)
+        {
+            withinDistance = true;
+        }
+       return withinDistance;
+    }
+
 }
