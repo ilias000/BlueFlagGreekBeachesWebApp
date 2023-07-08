@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -24,27 +24,45 @@ const labelStyles = {
 
 const rowHeight = '50vh';
 
-export default function UserList() {1
+export default function UserList() {
 
   
-  // Example of user data
-  const users = [
-    { id: 1, name: 'User1' },
-    { id: 2, name: 'User2' },
-    { id: 3, name: 'User3' },
-    { id: 4, name: 'User4' },
-    { id: 5, name: 'User5' },
-    { id: 6, name: 'User6' },
-    { id: 7, name: 'User7' },
-    { id: 8, name: 'User8' },
-    { id: 9, name: 'User9' },
-    { id: 10, name: 'User10' },
-    { id: 11, name: 'User11' },
-    { id: 12, name: 'User12' },
-    { id: 13, name: 'User13' },
-    { id: 14, name: 'User14' },
-    { id: 15, name: 'User15' },
-  ];
+//   Example of user data
+//   const users = [
+//     { email: 'Email_1' },
+//     { email: 'Email_2' },
+//     { email: 'Email_3' },
+//     { email: 'Email_4' },
+//     { email: 'Email_5' },
+//     { email: 'Email_6' },
+//     { email: 'Email_7' },
+//     { email: 'Email_8' },
+//     { email: 'Email_9' },
+//     { email: 'Email_10' },
+//     { email: 'Email_11' },
+//     { email: 'Email_12' },
+//     { email: 'Email_13' },
+//     { email: 'Email_14' },
+//     { email: 'Email_15' },
+//   ];
+
+
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    // Fetch the user list
+    fetchUserList();
+  }, []);
+  
+  const fetchUserList = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/user/all');
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error('Error fetching user list:', error);
+    }
+  };
   
 
   const usersPerPage = 10; // Number of users per page
@@ -58,9 +76,11 @@ export default function UserList() {1
     setCurrentPage(value);
   };
 
-  const handleDeleteUser = (userId) => {
+  const handleDeleteUser = (email) => {
     // console.log(`Deleted user with ID: ${userId}`);
   };
+
+
   
   return (
     <>
@@ -82,7 +102,7 @@ export default function UserList() {1
           </TableHead>
           <TableBody>
             {currentUsers.map((user) => (
-              <TableRow key={user.id}
+              <TableRow
                 sx={{
                   '&:nth-of-type(even)': {
                     backgroundColor: '#bfc7f5',
@@ -90,10 +110,10 @@ export default function UserList() {1
                 }}
               >
                 <TableCell align='center' height={rowHeight}>
-                    {user.name}
+                    {user.email}
                 </TableCell>
                 <TableCell align='center' >
-                  <IconButton sx={{borderRadius: '50%'}} onClick={() => handleDeleteUser(user.id)}>
+                  <IconButton sx={{borderRadius: '50%'}} onClick={() => handleDeleteUser(user.email)}>
                     <Delete height={rowHeight}/>
                   </IconButton>
                 </TableCell>

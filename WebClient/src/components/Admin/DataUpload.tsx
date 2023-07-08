@@ -42,7 +42,7 @@ export default function FileUploadForm() {
                 id="file1"
                 name="file1"
                 onChange={handleFile1Change}
-                // accept="."
+                accept=".csv"
               />
             </Box>
             <Box mb={2}>
@@ -54,7 +54,7 @@ export default function FileUploadForm() {
                 id="file2"
                 name="file2"
                 onChange={handleFile2Change}
-                // accept="."
+                accept=".csv"
               />
             </Box>
             <Button variant="contained" color="primary" type="submit">

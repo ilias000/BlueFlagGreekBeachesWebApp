@@ -29,7 +29,7 @@ export default function Admin() {
           <Tab value='dataTab' label="ΔΕΔΟΜΕΝΑ" />
         </Tabs>
 
-        <Box style={{ height: '100vh'}}>
+        <Box style={{ height: '100vh', backgroundColor: 'pink'}}>
           {adminTab === 'usersTab' && <UserList />}
           {adminTab === 'dataTab' && <DataUpload />}
         </Box>

@@ -28,6 +28,7 @@ public class UserController
         return userService.addUser(addUserDto);
     }
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @GetMapping(path="/all")
     public List<GetUserDto> getAllUsers() {
         return userService.getAllUsers();
