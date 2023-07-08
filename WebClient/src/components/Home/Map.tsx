@@ -36,9 +36,11 @@ interface MapProps {
   radius: number | undefined;
   setRadius: React.Dispatch<React.SetStateAction<number | undefined>>;
   points: Array<Pois>;
+  start: number;
+  setStart: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function Map({ selected, setSelected, radius, setRadius, points }: MapProps) {
+export default function Map({ selected, setSelected, radius, setRadius, points, start, setStart }: MapProps) {
   const [map, setMap] = React.useState<google.maps.Map>();
   const [circle, setCircle] = React.useState<google.maps.Circle | null>();
   const [mapLoaded, setMapLoaded] = React.useState(false);
@@ -57,6 +59,7 @@ export default function Map({ selected, setSelected, radius, setRadius, points }
       restriction: {
         latLngBounds: { north: 41.8, east: 28.45, west: 18.9, south: 34.8 },
       },
+      gestureHandling: "greedy",
       minZoom: 7,
       // Display a cursor with a marker icon whenever the user wants to select a point. Get marker.png
       // from public folder and set the cursor to the bottom center of the marker (20 and 47 px).
@@ -70,7 +73,12 @@ export default function Map({ selected, setSelected, radius, setRadius, points }
     if (points.length === 0) return;
     points.map((point) => bounds.extend(new google.maps.LatLng(point.latitude, point.longitude)));
     if (map) {
-      map.fitBounds(bounds);
+      if (points.length === 1) {
+        map.setZoom(10);
+        map.panTo({ lat: points[0].latitude, lng: points[0].longitude });
+      } else {
+        map.fitBounds(bounds);
+      }
     }
   }, [map, points, bounds]);
 
@@ -242,7 +250,7 @@ export default function Map({ selected, setSelected, radius, setRadius, points }
                           }}
                         >
                           <>
-                            {points.map((point, i) => (
+                            {points.slice(start, start + 5).map((point, i) => (
                               <ListItem key={i}>
                                 <ListItemText primary={point.title} secondary={point.description} />
                               </ListItem>
@@ -251,8 +259,9 @@ export default function Map({ selected, setSelected, radius, setRadius, points }
                               <ListItem>
                                 <Pagination
                                   count={Math.ceil(points.length / 5)}
-                                  defaultPage={1}
+                                  defaultPage={start / 5 + 1}
                                   siblingCount={0}
+                                  onChange={(e, value) => setStart((value - 1) * 5)}
                                   color="primary"
                                 />
                               </ListItem>

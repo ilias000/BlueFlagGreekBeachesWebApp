@@ -41,6 +41,7 @@ export default function Search() {
   const [selected, setSelected] = React.useState<google.maps.LatLng | null>();
   const [radius, setRadius] = React.useState<number | undefined>();
   const [points, setPoints] = React.useState<Pois[]>([]);
+  const [start, setStart] = React.useState(0);
 
   React.useEffect(() => {
     // Get all categories when component is mounted
@@ -63,8 +64,8 @@ export default function Search() {
       console.log("lat: " + selected?.lat() + "\nlon: " + selected?.lng() + "\nrad meters: " + radius);
       axios
         .post("http://localhost:8080/pois/search", {
-          start: 0,
-          count: 5,
+          start: start,
+          count: 20,
           text: formData.keywords,
           filters: {
             distance:
@@ -141,7 +142,15 @@ export default function Search() {
           </Grid>
         </form>
       </Box>
-      <Map selected={selected} setSelected={setSelected} radius={radius} setRadius={setRadius} points={points} />
+      <Map
+        selected={selected}
+        setSelected={setSelected}
+        radius={radius}
+        setRadius={setRadius}
+        points={points}
+        start={start}
+        setStart={setStart}
+      />
       <Footer />
     </>
   );
