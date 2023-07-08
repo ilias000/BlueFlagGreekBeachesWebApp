@@ -9,24 +9,24 @@ const dividerStyles = {
 };
 
 export default function FileUploadForm() {
-
-  const [categories, setCategories] = useState(null);
-  const [positions, setPositions] = useState(null);
+  const [categories, setCategories] = useState<File | null>(null);
+  const [positions, setPositions] = useState<File | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
-  const handleCategories = (event) => {
-    setCategories(event.target.files[0]);
+  const handleCategories = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    setCategories(file || null);
   };
 
-  const handlePositions = (event) => {
-    setPositions(event.target.files[0]);
+  const handlePositions = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    setPositions(file || null);
   };
 
-  const handleSubmit = async (event) => {
-    // Prevent the page from loading on success
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Check if both forms are filled
+
     if (!categories || !positions) {
       setUploadSuccess(false);
       setShowToast(true);
@@ -43,7 +43,7 @@ export default function FileUploadForm() {
 
       const responseCategories = await fetch('http://localhost:8080/import/categories', {
         method: 'POST',
-        body: formDataCategories
+        body: formDataCategories,
       });
 
       if (!responseCategories.ok) {
@@ -57,19 +57,19 @@ export default function FileUploadForm() {
 
       const responsePositions = await fetch('http://localhost:8080/import/pois', {
         method: 'POST',
-        body: formDataPositions
+        body: formDataPositions,
       });
 
       if (!responsePositions.ok) {
         throw new Error('Failed to upload positions');
       }
 
-      setUploadSuccess(true); // Set upload success flag to true
+      setUploadSuccess(true);
     } catch (error) {
       console.error(error);
-      setUploadSuccess(false); // Set upload success flag to false in case of an error
+      setUploadSuccess(false);
     } finally {
-      setShowToast(true); // Show toast notification
+      setShowToast(true);
     }
   };
 
@@ -81,7 +81,7 @@ export default function FileUploadForm() {
     <>
       <Divider variant="middle" sx={dividerStyles} />
 
-      <Grid container justifyContent="center" height="100%" sx={{mt: '2rem'}}>
+      <Grid container justifyContent="center" height="100%" sx={{ mt: '2rem' }}>
         <Grid item xs={12} sm={8} md={6}>
           <form onSubmit={handleSubmit}>
             <Box display="flex" flexDirection="column" alignItems="center">

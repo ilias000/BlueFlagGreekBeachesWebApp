@@ -16,21 +16,26 @@ import {
 } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 
-const headCellStyles = {
+interface User {
+  email: string;
+  isAdmin: boolean;
+}
+
+const headCellStyles: React.CSSProperties = {
   color: 'white',
   width: '50%',
 };
 
-const labelStyles = {
+const labelStyles: React.CSSProperties = {
   fontSize: '1.1rem',
 };
 
 const rowHeight = '25px';
 
 export default function UserList() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [userToDelete, setUserToDelete] = useState(null);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   useEffect(() => {
@@ -41,14 +46,24 @@ export default function UserList() {
   const fetchUserList = async () => {
     try {
       const response = await fetch('http://localhost:8080/user/all');
-      const data = await response.json();
+      const data: User[] = await response.json();
 
       // const data = [
+      //   { email: 'user1@example.com', isAdmin: true },
       //   { email: 'user2@example.com', isAdmin: false },
       //   { email: 'user3@example.com', isAdmin: false },
-      //   { email: 'user1@example.com', isAdmin: true },
       //   { email: 'user4@example.com', isAdmin: false },
       //   { email: 'user5@example.com', isAdmin: false },
+      //   { email: 'user6@example.com', isAdmin: false },
+      //   { email: 'user7@example.com', isAdmin: false },
+      //   { email: 'user8@example.com', isAdmin: false },
+      //   { email: 'user9@example.com', isAdmin: false },
+      //   { email: 'user10@example.com', isAdmin: true },
+      //   { email: 'user11@example.com', isAdmin: false },
+      //   { email: 'user12@example.com', isAdmin: false },
+      //   { email: 'user13@example.com', isAdmin: false },
+      //   { email: 'user14@example.com', isAdmin: false },
+      //   { email: 'user15@example.com', isAdmin: true },
       // ];
 
       // Place the admins at the top of the list
@@ -61,11 +76,11 @@ export default function UserList() {
 
   const usersPerPage = 10; // Number of users per page
 
-  const handlePageChange = (event, value) => {
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
   };
 
-  const handleDeleteUser = (user) => {
+  const handleDeleteUser = (user: User) => {
     setUserToDelete(user);
     setShowConfirmationModal(true);
   };
@@ -74,7 +89,7 @@ export default function UserList() {
     try {
       const responseDeleteUser = await fetch('', {
         method: 'POST',
-        body: JSON.stringify({ email: userToDelete.email })
+        body: JSON.stringify({ email: userToDelete!.email })
       });
 
       if (!responseDeleteUser.ok) {

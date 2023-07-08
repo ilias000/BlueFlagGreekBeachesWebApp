@@ -9,7 +9,7 @@ import DataUpload from "./DataUpload";
 export default function Admin() {
 
   const [adminTab, setadminTab] = useState('usersTab');
-  const handleAdminTab = (event, tab) => {
+  const handleAdminTab = (event: React.ChangeEvent<{}>, tab: string) => {
     setadminTab(tab);
   };
 
