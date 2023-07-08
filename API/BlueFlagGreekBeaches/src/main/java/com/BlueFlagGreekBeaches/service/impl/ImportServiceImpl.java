@@ -1,10 +1,10 @@
 package com.BlueFlagGreekBeaches.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
+
+import com.BlueFlagGreekBeaches.entity.User;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.SimpleMailMessage;
 
 import com.BlueFlagGreekBeaches.dto.category.AddCategoryDto;
 import com.BlueFlagGreekBeaches.dto.category.GetCategoryDto;
@@ -32,12 +32,13 @@ public class ImportServiceImpl implements ImportService
     private final CategoryRepository categoryRepository;
     private final PointOfInterestRepository pointOfInterestRepository;
     private final SaveSearchRepository searchRepository;
-
-    public ImportServiceImpl(CategoryRepository categoryRepository, PointOfInterestRepository pointOfInterestRepository,SaveSearchRepository searchRepository)
+    private final JavaMailSender javaMailSender;
+    public ImportServiceImpl(CategoryRepository categoryRepository, PointOfInterestRepository pointOfInterestRepository,SaveSearchRepository searchRepository,JavaMailSender javaMailSender)
     {
         this.categoryRepository = categoryRepository;
         this.pointOfInterestRepository = pointOfInterestRepository;
         this.searchRepository = searchRepository;
+        this.javaMailSender  = javaMailSender;
     }
 
     // Imports points of interest from a CSV file.
@@ -79,11 +80,26 @@ public class ImportServiceImpl implements ImportService
                                                                                                                                    pointOfInterest.getDescription(), pointOfInterest.getLatitude(),
                                                                                                                                    pointOfInterest.getLongitude(), pointOfInterest.getKeywords(),
                                                                                                                                    convertCategoryListToGetCategoryDtoList(pointOfInterest.getCategories()))).toList();
-        String message = "Uploaded the file successfully: " + file.getOriginalFilename();
+        String message = "Uploaded the file successfully: " + file.getOriginalFilename()+ ".";
         List<SaveSearch> saveSearchList = searchRepository.findAllForNonAdminUsers();
         if ( getPointOfInterestDtoList.size()>0 && saveSearchList.size() >0 )
         {
             List<SaveSearch> matchPointOfInterestsToSearchCriterias =matchPointOfInterestsToSearchCriterias(getPointOfInterestDtoList,saveSearchList);
+            if( matchPointOfInterestsToSearchCriterias.size()> 0 )
+            {
+                List<String> usersInformed = sendMatchingSearchNotifications(matchPointOfInterestsToSearchCriterias);
+                if ( usersInformed.size() > 0 )
+                {
+                    message += " The following emails, received notification";
+                    for (String email : usersInformed) {
+                        message += " Recipient: " + email;
+                    }
+                }
+                else {
+                    message += " No User received notification";
+                }
+
+            }
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ImportPointsOfInterestCSVResponseDto(getPointOfInterestDtoList, message));
     }
@@ -188,7 +204,7 @@ public class ImportServiceImpl implements ImportService
     }
 
 
-    public List<SaveSearch> matchPointOfInterestsToSearchCriterias(List<GetPointOfInterestDto> pointOfInterestDtoList, List<SaveSearch> saveSearchList) {
+    private List<SaveSearch> matchPointOfInterestsToSearchCriterias(List<GetPointOfInterestDto> pointOfInterestDtoList, List<SaveSearch> saveSearchList) {
         List<SaveSearch>  mathcingSearch = new ArrayList<>();
         for (SaveSearch criteria : saveSearchList) {
             System.out.println("Matching criteria: " + criteria.getTitle() + criteria.getUsers() );
@@ -210,7 +226,8 @@ public class ImportServiceImpl implements ImportService
 
         // Compare text
         if (criteria.getText() != null && !criteria.getText().isEmpty()) {
-            matches &= poi.description().toLowerCase().contains(criteria.getText().toLowerCase());
+            matches &= (poi.description().toLowerCase().contains(criteria.getText().toLowerCase())
+                    || poi.title().toLowerCase().contains(criteria.getText().toLowerCase()));
         }
 
         // Compare distance
@@ -220,7 +237,12 @@ public class ImportServiceImpl implements ImportService
 
         // Compare keywords
         if (criteria.getKeywords() != null && !criteria.getKeywords().isEmpty() && matches ) {
-            matches &= poi.keywords().contains(criteria.getKeywords());
+            List<String> poisKeys = poi.keywords();
+            List<String> criteriaKeys = criteria.getKeywords();
+            List<String> commonWords = new ArrayList<>(poisKeys);
+            commonWords.retainAll(criteriaKeys);
+            boolean hasCommonKey = !commonWords.isEmpty();
+            matches &= hasCommonKey;
         }
 
         // Compare categoryIds
@@ -231,7 +253,7 @@ public class ImportServiceImpl implements ImportService
                     .toList();
             List<Integer> catIds = criteria.getCategoryIds();
             List<Integer> list1Copy = new ArrayList<>(categoryIds);
-        // Retain only the common elements between list1Copy and list2
+        // Retain only the common elements between list1Copy and categoryIds
             list1Copy.retainAll(catIds);
 
         // Check if there is at least one common number
@@ -263,4 +285,40 @@ public class ImportServiceImpl implements ImportService
        return withinDistance;
     }
 
+
+    private List<String> sendMatchingSearchNotifications(List<SaveSearch> matchPointOfInterestsToSearchCriterias)
+    {
+        List<String> emailsSend = new ArrayList<>();
+        Map<User, List<String>> userTitleMap = new HashMap<>();
+        for (SaveSearch saveSearch : matchPointOfInterestsToSearchCriterias) {
+            for (User user : saveSearch.getUsers()) {
+                userTitleMap.computeIfAbsent(user, k -> new ArrayList<>()).add(saveSearch.getTitle());
+            }
+        }
+        for (Map.Entry<User, List<String>> entry : userTitleMap.entrySet()) {
+            User user = entry.getKey();
+            List<String> titles = entry.getValue();
+            String recipientEmail = user.getEmail();
+            String subject = "There are updates on your Searches";
+            String emailBody = "The Titles of your searches that have been updated:\n" + String.join("\n", titles);
+
+            boolean successfullySent = sendEmail(recipientEmail, subject, emailBody);
+            if(successfullySent)
+            {
+                emailsSend.add(recipientEmail);
+            }
+        }
+        return emailsSend;
+    }
+
+    private boolean sendEmail(String RecipientEmail, String Subject, String EmailBody)
+    {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("katrinbnt@gmail.com") ;
+        message.setTo(RecipientEmail);
+        message.setSubject(Subject);
+        message.setText(EmailBody);
+        javaMailSender.send(message);
+        return true;
+    }
 }
