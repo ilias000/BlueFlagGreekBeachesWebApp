@@ -231,7 +231,7 @@ public class ImportServiceImpl implements ImportService
         }
 
         // Compare distance
-        if (criteria.getKm() > 0 && criteria.getLat() != 0 && criteria.getLat() != 0 && matches ) {
+        if (criteria.getKm() > 0 && criteria.getLat() != 0 && criteria.getLon() != 0 && matches ) {
             matches &= isWithinDistance(poi,criteria.getKm(),criteria.getLat(),criteria.getLon());
         }
 
