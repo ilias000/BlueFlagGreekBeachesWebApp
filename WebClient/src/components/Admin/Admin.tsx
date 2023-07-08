@@ -16,7 +16,7 @@ export default function Admin() {
   return (
     <>
       <Header />
-      
+
       <Box sx={{ width: "60%", margin: "0 auto", marginTop: "5.5rem"}}>
         <Tabs value={adminTab} onChange={handleAdminTab} centered 
               sx={{
@@ -29,7 +29,7 @@ export default function Admin() {
           <Tab value='dataTab' label="ΔΕΔΟΜΕΝΑ" />
         </Tabs>
 
-        <Box style={{ height: '100vh', backgroundColor: 'pink'}}>
+        <Box style={{ height: '90vh' }}>
           {adminTab === 'usersTab' && <UserList />}
           {adminTab === 'dataTab' && <DataUpload />}
         </Box>
