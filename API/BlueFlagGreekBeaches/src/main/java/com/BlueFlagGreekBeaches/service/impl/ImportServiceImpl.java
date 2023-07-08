@@ -52,7 +52,7 @@ public class ImportServiceImpl implements ImportService
         {
             List<Category> categories = getCategoriesFromIds(addPointOfInterestDto.categoriesIds());
             if (categories == null)
-                return ResponseEntity.badRequest().body(new ImportPointsOfInterestCSVResponseDto(null, "The CSV file contains points of interest with that does not exist in the database!"));
+                return ResponseEntity.badRequest().body(new ImportPointsOfInterestCSVResponseDto(null, "The CSV file contains points of interest with categories that does not exist in the database!"));
 
             PointOfInterest pointOfInterest = new PointOfInterest(timestampAdded ,addPointOfInterestDto.title(),
                                                                   addPointOfInterestDto.description() ,addPointOfInterestDto.latitude(),
