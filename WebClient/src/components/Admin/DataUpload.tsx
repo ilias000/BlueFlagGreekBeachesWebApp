@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button, Box, Typography, TextField, Divider, Snackbar, Grid } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 
@@ -13,6 +13,8 @@ export default function FileUploadForm() {
   const [positions, setPositions] = useState<File | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const categoriesInputRef = useRef<HTMLInputElement | null>(null);
+  const positionsInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleCategories = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -41,8 +43,6 @@ export default function FileUploadForm() {
         if (!responseCategories.ok) {
           throw new Error("Failed to upload categories");
         }
-
-        setUploadSuccess(true);
       }
 
       // POSITIONS
@@ -58,14 +58,26 @@ export default function FileUploadForm() {
         if (!responsePositions.ok) {
           throw new Error("Failed to upload positions");
         }
-
-        setUploadSuccess(true);
       }
+
+      setUploadSuccess(true);
+      resetForm();
     } catch (error) {
       console.error(error);
       setUploadSuccess(false);
     } finally {
       setShowToast(true);
+    }
+  };
+
+  const resetForm = () => {
+    setCategories(null);
+    setPositions(null);
+    if (categoriesInputRef.current) {
+      categoriesInputRef.current.value = "";
+    }
+    if (positionsInputRef.current) {
+      positionsInputRef.current.value = "";
     }
   };
 
@@ -85,13 +97,27 @@ export default function FileUploadForm() {
                 <label>
                   <Typography style={{ fontSize: "1.1rem" }}>Κατηγορίες:</Typography>
                 </label>
-                <input type="file" id="categories" name="categories" onChange={handleCategories} accept=".csv" />
+                <input
+                  type="file"
+                  id="categories"
+                  name="categories"
+                  onChange={handleCategories}
+                  accept=".csv"
+                  ref={categoriesInputRef}
+                />
               </Box>
               <Box mb={2}>
                 <label>
                   <Typography style={{ fontSize: "1.1rem" }}>Σημεία:</Typography>
                 </label>
-                <input type="file" id="positions" name="positions" onChange={handlePositions} accept=".csv" />
+                <input
+                  type="file"
+                  id="positions"
+                  name="positions"
+                  onChange={handlePositions}
+                  accept=".csv"
+                  ref={positionsInputRef}
+                />
               </Box>
               <Button variant="contained" color="primary" type="submit">
                 ΑΝΕΒΑΣΤΕ
