@@ -36,12 +36,9 @@ function SignIn(props: SignInUpProps) {
     (e: React.FormEvent<HTMLFormElement>): void => {
       e.preventDefault();
       console.log("email: " + formData.email + "\npassword: " + formData.password);
-      if (!validateEmail(formData.email)) {
-        setEmailError("Μη έγκυρο email");
-        return;
-      }
+      setEmailError("Μη έγκυρο email");
       setEmailError(""); // clear any previous errors
-      LoginUser();
+      LoginUser(formData.email, formData.password);
       props.setOpen(false);
     },
     [formData]
