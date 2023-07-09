@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, List, ListItem, ListItemText, Paper } from "@mui/material";
-import { GoogleMap, Circle, Marker, MarkerClusterer } from "@react-google-maps/api";
+import { GoogleMap, Circle, Marker, MarkerClusterer, InfoWindow } from "@react-google-maps/api";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import Places from "./Places";
 import RoomIcon from "@mui/icons-material/Room";
@@ -9,19 +9,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Snackbar, Alert, Box, Pagination, IconButton, Tooltip } from "@mui/material";
 import { Clusterer } from "@react-google-maps/marker-clusterer";
 
-// const generatePoints = (position: google.maps.LatLngLiteral) => {
-//   const points: Array<google.maps.LatLngLiteral> = [];
-//   for (let i = 0; i < 10; i++) {
-//     const direction = Math.random() < 0.5 ? -4 : 4;
-//     points.push({ lat: position.lat + Math.random() / direction, lng: position.lng + Math.random() / direction });
-//   }
-//   return points;
-// };
-
 const iconDimensions = {
   height: "3rem",
   width: "3rem",
 };
+
+const infoWindowOptions = { pixelOffset: new google.maps.Size(0, -40) };
 
 type Pois = {
   title: string;
@@ -38,15 +31,27 @@ interface MapProps {
   points: Array<Pois>;
   start: number;
   setStart: React.Dispatch<React.SetStateAction<number>>;
+  totalPoints: number;
 }
 
-export default function Map({ selected, setSelected, radius, setRadius, points, start, setStart }: MapProps) {
+export default function Map({
+  selected,
+  setSelected,
+  radius,
+  setRadius,
+  points,
+  start,
+  setStart,
+  totalPoints,
+}: MapProps) {
   const [map, setMap] = React.useState<google.maps.Map>();
   const [circle, setCircle] = React.useState<google.maps.Circle | null>();
   const [mapLoaded, setMapLoaded] = React.useState(false);
   const [selectPoint, setSelectPoint] = React.useState(false);
   const [displayCircle, setDisplayCircle] = React.useState(false);
   const [noPointSelected, setNoPointSelected] = React.useState(false);
+  const [selectedMarker, setSelectedMarker] = React.useState<Pois | null>(null);
+  const [keepInfoWindow, setKeepInfoWindow] = React.useState(false);
 
   const initcenter = React.useMemo(() => ({ lat: 39.0, lng: 23.5 }), []);
   const options = React.useMemo(
@@ -109,10 +114,12 @@ export default function Map({ selected, setSelected, radius, setRadius, points, 
         console.error(error);
       }
     );
-  }, []);
+  }, [map]);
 
   const handleMapClick = React.useCallback(
     (e: google.maps.MapMouseEvent) => {
+      setKeepInfoWindow(false);
+      setSelectedMarker(null);
       if (!selectPoint || !e.latLng) return;
       setSelected(new google.maps.LatLng(e.latLng.lat(), e.latLng.lng()));
       setSelectPoint(false);
@@ -250,18 +257,43 @@ export default function Map({ selected, setSelected, radius, setRadius, points, 
                           }}
                         >
                           <>
-                            {points.slice(start, start + 5).map((point, i) => (
-                              <ListItem key={i}>
+                            {points.slice(0, 5).map((point, i) => (
+                              <ListItem
+                                key={i}
+                                onMouseEnter={() => setSelectedMarker(point)}
+                                onMouseLeave={() => {
+                                  if (!keepInfoWindow) setSelectedMarker(null);
+                                }}
+                                onClick={() => {
+                                  setKeepInfoWindow(true);
+                                  setSelectedMarker(point);
+                                }}
+                                sx={{
+                                  backgroundColor:
+                                    keepInfoWindow && selectedMarker?.title === point.title ? "lightblue" : "inherit",
+                                  "&:hover": {
+                                    backgroundColor: "lightblue",
+                                    cursor: "pointer",
+                                  },
+                                }}
+                              >
                                 <ListItemText primary={point.title} secondary={point.description} />
                               </ListItem>
                             ))}
-                            {points.length / 5 > 1 && (
+                            {totalPoints / 5 > 1 && (
                               <ListItem>
                                 <Pagination
-                                  count={Math.ceil(points.length / 5)}
-                                  defaultPage={start / 5 + 1}
+                                  count={Math.ceil(totalPoints / 5)}
+                                  defaultPage={1}
                                   siblingCount={0}
-                                  onChange={(e, value) => setStart((value - 1) * 5)}
+                                  onChange={(e, value) => {
+                                    const url = new URL(window.location.href);
+                                    const searchParams = new URLSearchParams(url.search);
+                                    searchParams.set("page", value.toString());
+                                    url.search = searchParams.toString();
+                                    window.history.replaceState({}, "", url.toString());
+                                    setStart((value - 1) * 5);
+                                  }}
                                   color="primary"
                                 />
                               </ListItem>
@@ -303,15 +335,32 @@ export default function Map({ selected, setSelected, radius, setRadius, points, 
                   {(clusterer: Clusterer) => (
                     <>
                       {points.map((point, i) => (
-                        <Marker
-                          key={i}
-                          position={new google.maps.LatLng(point.latitude, point.longitude)}
-                          clusterer={clusterer}
-                        />
+                        <div key={i}>
+                          <Marker
+                            position={new google.maps.LatLng(point.latitude, point.longitude)}
+                            clusterer={clusterer}
+                            onClick={() => setSelectedMarker(point)}
+                          />
+                        </div>
                       ))}
                     </>
                   )}
                 </MarkerClusterer>
+
+                {selectedMarker && (
+                  <InfoWindow
+                    position={{ lat: selectedMarker.latitude, lng: selectedMarker.longitude }}
+                    onCloseClick={() => setSelectedMarker(null)}
+                    options={infoWindowOptions}
+                  >
+                    <>
+                      <button onClick={() => setSelectedMarker(null)} style={{ display: "none" }} aria-label="Close">
+                        &times;
+                      </button>
+                      <div style={{ marginTop: "0.75rem" }}>{selectedMarker.title}</div>
+                    </>
+                  </InfoWindow>
+                )}
 
                 {/* display selected point from user with circle */}
                 {selected && (
