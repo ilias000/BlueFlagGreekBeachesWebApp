@@ -5,6 +5,8 @@ import java.util.stream.Collectors;
 
 import com.BlueFlagGreekBeaches.dto.user.AddUserResponseDto;
 import com.BlueFlagGreekBeaches.dto.user.DeleteUserDto;
+import com.BlueFlagGreekBeaches.entity.SaveSearch;
+import com.BlueFlagGreekBeaches.repository.SaveSearchRepository;
 import com.BlueFlagGreekBeaches.repository.UserRepository;
 import com.BlueFlagGreekBeaches.dto.user.AddUserDto;
 import com.BlueFlagGreekBeaches.dto.user.GetUserDto;
@@ -18,10 +20,12 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService
 {
     private final UserRepository userRepository;
+    private final SaveSearchRepository saveSearchRepository;
 
-    public UserServiceImpl(UserRepository userRepository)
+    public UserServiceImpl(UserRepository userRepository, SaveSearchRepository saveSearchRepository)
     {
         this.userRepository = userRepository;
+        this.saveSearchRepository = saveSearchRepository;
     }
 
     // Adds a new user to the database.
@@ -64,6 +68,21 @@ public class UserServiceImpl implements UserService
             return ResponseEntity.badRequest().body("Ths user is an admin and cannot be deleted.");
         }
 
+        // Delete the user from all his save searches. If no other user has this search saved delete the saveSearch
+        for(SaveSearch saveSearch : user.getSaveSearches())
+        {
+            List<User> users = saveSearch.getUsers();
+            users.remove(user);
+            if(users.isEmpty())
+            {
+                saveSearchRepository.delete(saveSearch);
+            }
+            else
+            {
+                saveSearch.setUsers(users);
+                saveSearchRepository.save(saveSearch);
+            }
+        }
         userRepository.delete(user);
         return ResponseEntity.ok().body("User with email " + deleteUserDto.email() + " was successfully deleted.");
     }

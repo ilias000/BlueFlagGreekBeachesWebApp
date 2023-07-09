@@ -51,7 +51,7 @@ public class SaveSearch
     @ManyToMany @JoinTable(name = "saved_search_users",
             joinColumns = @JoinColumn(name = "saved_search_id"),
             inverseJoinColumns = @JoinColumn(name = "users_id"))
-    private List<User> users = new ArrayList<>();
+    private List<User> users = new ArrayList<>(); // When using a List, Hibernate removes all entities from the junction table and inserts the remaining ones. This can cause performance issues. We can easily avoid this problem by using Set.
 
     public SaveSearch(String title, String text, List<String> keywords, List<Integer> categoryIds, double lat, double lon, int km)
     {

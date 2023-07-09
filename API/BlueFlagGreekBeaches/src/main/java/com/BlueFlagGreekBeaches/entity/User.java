@@ -36,7 +36,7 @@ public class User {
     private Boolean isAdmin = false;
 
     @ManyToMany(mappedBy = "users")
-    private List<SaveSearch> saveSearches = new ArrayList<>();
+    private List<SaveSearch> saveSearches = new ArrayList<>();  // When using a List, Hibernate removes all entities from the junction table and inserts the remaining ones. This can cause performance issues. We can easily avoid this problem by using Set.
 
     public User(String email, String password)
     {

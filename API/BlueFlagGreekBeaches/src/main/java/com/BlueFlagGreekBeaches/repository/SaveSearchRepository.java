@@ -15,4 +15,6 @@ public interface SaveSearchRepository extends JpaRepository<SaveSearch, UUID>
     SaveSearch findSaveSearch(String title, String text, List<String> keywords, List<Integer> categoryIds, double lat, double lon, int km);
     @Query("SELECT s FROM SaveSearch s JOIN s.users u WHERE u.isAdmin = false")
     List<SaveSearch> findAllForNonAdminUsers();
+
+    SaveSearch findByTitle(String title);
 }
