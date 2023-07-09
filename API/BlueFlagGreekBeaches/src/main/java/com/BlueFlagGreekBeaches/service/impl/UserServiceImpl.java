@@ -59,6 +59,11 @@ public class UserServiceImpl implements UserService
             return ResponseEntity.badRequest().body("User with email " + deleteUserDto.email() + " does not exist.");
         }
 
+        if(user.getIsAdmin())
+        {
+            return ResponseEntity.badRequest().body("User with email " + deleteUserDto.email() + " is an admin and cannot be deleted.");
+        }
+
         userRepository.delete(user);
         return ResponseEntity.ok().body("User with email " + deleteUserDto.email() + " was successfully deleted.");
     }
