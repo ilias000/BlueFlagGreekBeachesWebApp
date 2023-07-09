@@ -9,32 +9,46 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Snackbar, Alert, Box, Pagination, IconButton, Tooltip } from "@mui/material";
 import { Clusterer } from "@react-google-maps/marker-clusterer";
 
-const generatePoints = (position: google.maps.LatLngLiteral) => {
-  const points: Array<google.maps.LatLngLiteral> = [];
-  for (let i = 0; i < 10; i++) {
-    const direction = Math.random() < 0.5 ? -4 : 4;
-    points.push({ lat: position.lat + Math.random() / direction, lng: position.lng + Math.random() / direction });
-  }
-  return points;
-};
+// const generatePoints = (position: google.maps.LatLngLiteral) => {
+//   const points: Array<google.maps.LatLngLiteral> = [];
+//   for (let i = 0; i < 10; i++) {
+//     const direction = Math.random() < 0.5 ? -4 : 4;
+//     points.push({ lat: position.lat + Math.random() / direction, lng: position.lng + Math.random() / direction });
+//   }
+//   return points;
+// };
 
 const iconDimensions = {
   height: "3rem",
   width: "3rem",
 };
 
-export default function Map() {
-  const [selected, setSelected] = React.useState<google.maps.LatLng | null>();
+type Pois = {
+  title: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+};
+
+interface MapProps {
+  selected: google.maps.LatLng | null | undefined;
+  setSelected: React.Dispatch<React.SetStateAction<google.maps.LatLng | null | undefined>>;
+  radius: number | undefined;
+  setRadius: React.Dispatch<React.SetStateAction<number | undefined>>;
+  points: Array<Pois>;
+  start: number;
+  setStart: React.Dispatch<React.SetStateAction<number>>;
+}
+
+export default function Map({ selected, setSelected, radius, setRadius, points, start, setStart }: MapProps) {
   const [map, setMap] = React.useState<google.maps.Map>();
   const [circle, setCircle] = React.useState<google.maps.Circle | null>();
-  const [radius, setRadius] = React.useState(1500.0);
   const [mapLoaded, setMapLoaded] = React.useState(false);
   const [selectPoint, setSelectPoint] = React.useState(false);
   const [displayCircle, setDisplayCircle] = React.useState(false);
   const [noPointSelected, setNoPointSelected] = React.useState(false);
 
   const initcenter = React.useMemo(() => ({ lat: 39.0, lng: 23.5 }), []);
-  const points = React.useMemo(() => generatePoints(initcenter), []);
   const options = React.useMemo(
     () => ({
       mapId: import.meta.env.VITE_CUSTOM_MAP_ID,
@@ -45,6 +59,7 @@ export default function Map() {
       restriction: {
         latLngBounds: { north: 41.8, east: 28.45, west: 18.9, south: 34.8 },
       },
+      gestureHandling: "greedy",
       minZoom: 7,
       // Display a cursor with a marker icon whenever the user wants to select a point. Get marker.png
       // from public folder and set the cursor to the bottom center of the marker (20 and 47 px).
@@ -55,15 +70,21 @@ export default function Map() {
   const bounds = React.useMemo(() => new google.maps.LatLngBounds(), []);
 
   React.useEffect(() => {
-    points.map((point) => bounds.extend(point));
+    if (points.length === 0) return;
+    points.map((point) => bounds.extend(new google.maps.LatLng(point.latitude, point.longitude)));
     if (map) {
-      map.fitBounds(bounds);
+      if (points.length === 1) {
+        map.setZoom(10);
+        map.panTo({ lat: points[0].latitude, lng: points[0].longitude });
+      } else {
+        map.fitBounds(bounds);
+      }
     }
   }, [map, points, bounds]);
 
   const handleRadiusChange = React.useCallback(() => {
     if (!circle) return;
-    setRadius(circle.getRadius());
+    setRadius(Math.round(circle.getRadius()));
   }, [circle]);
 
   const handleCenterChange = React.useCallback(() => {
@@ -71,15 +92,16 @@ export default function Map() {
     setSelected(circle.getCenter());
   }, [circle]);
 
-  const findMyLocation = React.useCallback((setSelected: any, map: any) => {
-    if (!map) {
+  const findMyLocation = React.useCallback(() => {
+    if (!map || typeof map === undefined) {
       console.error("unexpected error: Cannot display location since map is undefined");
+      return;
     }
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
-        setSelected({ lat, lng });
+        setSelected(new google.maps.LatLng(lat, lng));
         map.setZoom(13);
         map.panTo({ lat, lng });
       },
@@ -106,7 +128,8 @@ export default function Map() {
         return;
       }
       const temp_radius = 5 * Math.pow(2, 22 - map.getZoom());
-      setRadius(temp_radius);
+      console.log(temp_radius);
+      setRadius(Math.round(temp_radius));
       setDisplayCircle(true);
     },
     [selected]
@@ -114,6 +137,7 @@ export default function Map() {
 
   const handleDeleteCircle = React.useCallback(() => {
     setDisplayCircle(false);
+    setRadius(undefined);
     setCircle(null);
     setSelected(null);
   }, []);
@@ -215,29 +239,37 @@ export default function Map() {
                 </Grid>
                 <Grid container position="absolute" width="20rem" maxWidth="70vw" mt={3} ml={3}>
                   <Grid item>
-                    <Paper variant="outlined">
-                      <List
-                        sx={{ width: "20rem", maxWidth: "70vw", bgcolor: "background.paper", paddingBottom: "0.5rem" }}
-                      >
-                        <>
-                          {points.slice(0, 5).map((point, i) => (
-                            <ListItem key={i}>
-                              <ListItemText primary={"Σημείο " + i} secondary="περιγραφή" />
-                            </ListItem>
-                          ))}
-                          {points.length / 5 > 1 && (
-                            <ListItem>
-                              <Pagination
-                                count={Math.ceil(points.length / 5)}
-                                defaultPage={1}
-                                siblingCount={0}
-                                color="primary"
-                              />
-                            </ListItem>
-                          )}
-                        </>
-                      </List>
-                    </Paper>
+                    {points.length > 0 && (
+                      <Paper variant="outlined">
+                        <List
+                          sx={{
+                            width: "20rem",
+                            maxWidth: "70vw",
+                            bgcolor: "background.paper",
+                            paddingBottom: "0.5rem",
+                          }}
+                        >
+                          <>
+                            {points.slice(start, start + 5).map((point, i) => (
+                              <ListItem key={i}>
+                                <ListItemText primary={point.title} secondary={point.description} />
+                              </ListItem>
+                            ))}
+                            {points.length / 5 > 1 && (
+                              <ListItem>
+                                <Pagination
+                                  count={Math.ceil(points.length / 5)}
+                                  defaultPage={start / 5 + 1}
+                                  siblingCount={0}
+                                  onChange={(e, value) => setStart((value - 1) * 5)}
+                                  color="primary"
+                                />
+                              </ListItem>
+                            )}
+                          </>
+                        </List>
+                      </Paper>
+                    )}
                   </Grid>
                 </Grid>
 
@@ -254,7 +286,7 @@ export default function Map() {
                   </Grid>
                   <Grid item>
                     <Tooltip title="Εμφάνιση της τοποθεσίας σας" placement="top">
-                      <IconButton onClick={() => findMyLocation(setSelected, map)}>
+                      <IconButton onClick={() => findMyLocation()}>
                         <MyLocationIcon
                           sx={{
                             padding: "0.75rem",
@@ -271,7 +303,11 @@ export default function Map() {
                   {(clusterer: Clusterer) => (
                     <>
                       {points.map((point, i) => (
-                        <Marker key={i} position={point} clusterer={clusterer} />
+                        <Marker
+                          key={i}
+                          position={new google.maps.LatLng(point.latitude, point.longitude)}
+                          clusterer={clusterer}
+                        />
                       ))}
                     </>
                   )}
