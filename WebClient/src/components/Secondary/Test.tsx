@@ -25,7 +25,7 @@ export default function Test() {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://localhost:8080/user/all"); // Replace with your actual API endpoint
+        const response = await fetch("http://localhost:8080/user/all"); // Replace with your actual API endpoint
         const jsonData = await response.json();
       } catch (error) {
         console.error("Error fetching data:", error);
