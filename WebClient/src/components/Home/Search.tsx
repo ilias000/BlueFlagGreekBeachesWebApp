@@ -3,9 +3,22 @@ import Map from "./Map";
 import AuthContext from "../Secondary/Auth";
 import Header from "../Secondary/Header";
 import Footer from "../Secondary/Footer";
-import { Autocomplete, Box, Button, Checkbox, Grid, FormGroup, FormControlLabel, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Checkbox,
+  Grid,
+  FormGroup,
+  FormControlLabel,
+  TextField,
+  Modal,
+  Typography,
+  IconButton,
+} from "@mui/material";
 import baseAxios from "../../AxiosConfig";
 import { useSearchParams } from "react-router-dom";
+import { Close } from "@mui/icons-material";
 
 const inputBox = {
   width: 300,
@@ -137,6 +150,68 @@ export default function Search() {
     [formData, radius, selected]
   );
 
+  // SAVE SEARCH
+  // --------------------------------------------------------
+
+  // Save Search Box Checker
+  const [saveSearchCheck, setSaveSearchCheck] = React.useState(false);
+  const handleSaveSearchCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSaveSearchCheck(event.target.checked);
+  };
+
+  const [showSaveSearchModal, setShowSaveSearchModal] = React.useState(false);
+  // Search button handler
+  const handleSearch = () => {
+    if (AuthData.isLoggedIn && saveSearchCheck) {
+      console.log("display save modal");
+      setShowSaveSearchModal(true);
+    }
+  };
+  // Save Search Title
+  const [title, setTitle] = React.useState<string>("");
+  // Save Search Modal
+  const handleSaveSearch = async () => {
+    // debugger;
+    let requestBody = {
+      title: title,
+      text: formData.text,
+      keywords: null,
+      categoryIds: allCategories
+        .filter((category: Category) => formData.categories.includes(category.name))
+        .map((category: Category) => category.id),
+      lat: selected?.lat(),
+      lon: selected?.lng(),
+      km: radius ? Math.round(radius / 1000) : null,
+    };
+
+    let user_email = AuthData.email;
+    let url = `http://localhost:8080/pois/saveSearch?email=${user_email}`;
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        console.error("Save search request failed");
+        setSaveSearchStatus(2);
+      } else {
+        setSaveSearchStatus(1);
+      }
+    } catch (error) {
+      console.error("Save search failed");
+      setSaveSearchStatus(2);
+    } finally {
+      setTitle("");
+    }
+  };
+  // 0 : Display Save Search form, 1 : Display success msg, 2 : Display fail msg
+  const [saveSearchStatus, setSaveSearchStatus] = React.useState(0);
+
   return (
     <>
       <Header />
@@ -171,11 +246,12 @@ export default function Search() {
                   mt: 2,
                   height: AuthData.isLoggedIn ? "2.5rem" : "3.5rem",
                 }}
+                onClick={handleSearch}
               >
                 ΑΝΑΖΗΤΗΣΗ
               </Button>
               {AuthData.isLoggedIn && (
-                <FormGroup>
+                <FormGroup onChange={handleSaveSearchCheck}>
                   <FormControlLabel
                     control={<Checkbox sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }} />}
                     label={
@@ -194,6 +270,97 @@ export default function Search() {
           </Grid>
         </form>
       </Box>
+
+      <Modal
+        open={showSaveSearchModal}
+        onClose={() => {
+          setShowSaveSearchModal(false);
+          setSaveSearchStatus(0);
+        }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            backgroundColor: "white",
+            boxShadow: 24,
+            padding: 4,
+          }}
+        >
+          <IconButton
+            sx={{ position: "absolute", top: 5, right: 5 }}
+            onClick={() => {
+              setShowSaveSearchModal(false);
+              setSaveSearchStatus(0);
+            }}
+          >
+            <Close />
+          </IconButton>
+
+          {saveSearchStatus === 0 && (
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12}>
+                <Typography variant="body1" align="center" gutterBottom>
+                  Εισάγετε έναν τίτλο αναζήτησης:
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Τίτλος"
+                  variant="outlined"
+                  fullWidth
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  // Add an onChange handler to capture the input value
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: 2,
+                  }}
+                >
+                  <Button variant="contained" onClick={handleSaveSearch}>
+                    Αποθηκευση
+                  </Button>
+                </Box>
+              </Grid>
+            </Grid>
+          )}
+          {saveSearchStatus === 1 && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="body1" align="center">
+                Η αναζήτηση αποθηκεύτηκε με επιτυχία!
+              </Typography>
+            </Box>
+          )}
+          {saveSearchStatus === 2 && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="body1" align="center">
+                Η αναζήτηση απέτυχε.
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      </Modal>
+
       <Map
         selected={selected}
         setSelected={setSelected}
