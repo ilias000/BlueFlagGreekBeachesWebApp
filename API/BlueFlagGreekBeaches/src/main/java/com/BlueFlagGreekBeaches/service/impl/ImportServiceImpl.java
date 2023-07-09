@@ -1,9 +1,10 @@
 package com.BlueFlagGreekBeaches.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import com.BlueFlagGreekBeaches.entity.User;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.SimpleMailMessage;
 
 import com.BlueFlagGreekBeaches.dto.category.AddCategoryDto;
 import com.BlueFlagGreekBeaches.dto.category.GetCategoryDto;
@@ -13,9 +14,11 @@ import com.BlueFlagGreekBeaches.dto.imp.ImportCategoryCSVResponseDto;
 import com.BlueFlagGreekBeaches.dto.imp.ImportPointsOfInterestCSVResponseDto;
 import com.BlueFlagGreekBeaches.entity.Category;
 import com.BlueFlagGreekBeaches.entity.PointOfInterest;
+import com.BlueFlagGreekBeaches.entity.SaveSearch;
 import com.BlueFlagGreekBeaches.helper.CSVHelper;
 import com.BlueFlagGreekBeaches.repository.CategoryRepository;
 import com.BlueFlagGreekBeaches.repository.PointOfInterestRepository;
+import com.BlueFlagGreekBeaches.repository.SaveSearchRepository;
 import com.BlueFlagGreekBeaches.service.ImportService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +31,14 @@ public class ImportServiceImpl implements ImportService
 {
     private final CategoryRepository categoryRepository;
     private final PointOfInterestRepository pointOfInterestRepository;
-
-    public ImportServiceImpl(CategoryRepository categoryRepository, PointOfInterestRepository pointOfInterestRepository)
+    private final SaveSearchRepository searchRepository;
+    private final JavaMailSender javaMailSender;
+    public ImportServiceImpl(CategoryRepository categoryRepository, PointOfInterestRepository pointOfInterestRepository,SaveSearchRepository searchRepository,JavaMailSender javaMailSender)
     {
         this.categoryRepository = categoryRepository;
         this.pointOfInterestRepository = pointOfInterestRepository;
+        this.searchRepository = searchRepository;
+        this.javaMailSender  = javaMailSender;
     }
 
     // Imports points of interest from a CSV file.
@@ -74,7 +80,27 @@ public class ImportServiceImpl implements ImportService
                                                                                                                                    pointOfInterest.getDescription(), pointOfInterest.getLatitude(),
                                                                                                                                    pointOfInterest.getLongitude(), pointOfInterest.getKeywords(),
                                                                                                                                    convertCategoryListToGetCategoryDtoList(pointOfInterest.getCategories()))).toList();
-        String message = "Uploaded the file successfully: " + file.getOriginalFilename();
+        String message = "Uploaded the file successfully: " + file.getOriginalFilename()+ ".";
+        List<SaveSearch> saveSearchList = searchRepository.findAllForNonAdminUsers();
+        if ( getPointOfInterestDtoList.size()>0 && saveSearchList.size() >0 )
+        {
+            List<SaveSearch> matchPointOfInterestsToSearchCriterias =matchPointOfInterestsToSearchCriterias(getPointOfInterestDtoList,saveSearchList);
+            if( matchPointOfInterestsToSearchCriterias.size()> 0 )
+            {
+                List<String> usersInformed = sendMatchingSearchNotifications(matchPointOfInterestsToSearchCriterias);
+                if ( usersInformed.size() > 0 )
+                {
+                    message += " The following emails, received notification";
+                    for (String email : usersInformed) {
+                        message += " Recipient: " + email;
+                    }
+                }
+                else {
+                    message += " No User received notification";
+                }
+
+            }
+        }
         return ResponseEntity.status(HttpStatus.OK).body(new ImportPointsOfInterestCSVResponseDto(getPointOfInterestDtoList, message));
     }
 
@@ -175,5 +201,120 @@ public class ImportServiceImpl implements ImportService
     private List<GetCategoryDto> convertCategoryListToGetCategoryDtoList(List<Category> categoriesList)
     {
         return categoriesList.stream().map(category -> new GetCategoryDto(category.getCategoryId(), category.getName())).toList();
+    }
+
+
+    private List<SaveSearch> matchPointOfInterestsToSearchCriterias(List<GetPointOfInterestDto> pointOfInterestDtoList, List<SaveSearch> saveSearchList) {
+        List<SaveSearch>  mathcingSearch = new ArrayList<>();
+        for (SaveSearch criteria : saveSearchList) {
+            System.out.println("Matching criteria: " + criteria.getTitle() + criteria.getUsers() );
+            for (GetPointOfInterestDto poi : pointOfInterestDtoList) {
+                if (matchesCriteria(poi, criteria)) {
+                    mathcingSearch.add(criteria);
+                    System.out.println("Match found: PointOfInterest ID = " + poi.description()+ criteria.getTitle() + criteria.getUsers());
+                    break;
+                }
+            }
+        }
+        return mathcingSearch;
+    }
+
+    private boolean matchesCriteria(GetPointOfInterestDto poi, SaveSearch criteria) {
+        // Compare poi attributes with criteria attributes
+        // Return true if it's a match, false otherwise
+        boolean matches = true;
+
+        // Compare text
+        if (criteria.getText() != null && !criteria.getText().isEmpty()) {
+            matches &= (poi.description().toLowerCase().contains(criteria.getText().toLowerCase())
+                    || poi.title().toLowerCase().contains(criteria.getText().toLowerCase()));
+        }
+
+        // Compare distance
+        if (criteria.getKm() > 0 && criteria.getLat() != 0 && criteria.getLon() != 0 && matches ) {
+            matches &= isWithinDistance(poi,criteria.getKm(),criteria.getLat(),criteria.getLon());
+        }
+
+        // Compare keywords
+        if (criteria.getKeywords() != null && !criteria.getKeywords().isEmpty() && matches ) {
+            List<String> poisKeys = poi.keywords();
+            List<String> criteriaKeys = criteria.getKeywords();
+            List<String> commonWords = new ArrayList<>(poisKeys);
+            commonWords.retainAll(criteriaKeys);
+            boolean hasCommonKey = !commonWords.isEmpty();
+            matches &= hasCommonKey;
+        }
+
+        // Compare categoryIds
+        if (criteria.getCategoryIds() != null && !criteria.getCategoryIds().isEmpty() && matches ) {
+            List<GetCategoryDto> categories = poi.categories();
+            List<Integer> categoryIds = categories.stream()
+                    .map(GetCategoryDto::categoryId)
+                    .toList();
+            List<Integer> catIds = criteria.getCategoryIds();
+            List<Integer> list1Copy = new ArrayList<>(categoryIds);
+        // Retain only the common elements between list1Copy and categoryIds
+            list1Copy.retainAll(catIds);
+
+        // Check if there is at least one common number
+            boolean hasCommonNumber = !list1Copy.isEmpty();
+            matches &= hasCommonNumber;
+        }
+
+        return matches;
+    }
+
+    private boolean isWithinDistance(GetPointOfInterestDto poi, int km, double lat,double lon) {
+        double R = 6378137; // Earth's mean radius in meters
+
+        double dLat = Math.toRadians(lat - poi.latitude());
+        double dLon = Math.toRadians(lon - poi.longitude());
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat)) * Math.cos(Math.toRadians(lat))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double d = R * c; // distance in meters
+
+        return d <= km * 1000; // compare distance with km (converted to meters)
+    }
+
+
+    private List<String> sendMatchingSearchNotifications(List<SaveSearch> matchPointOfInterestsToSearchCriterias)
+    {
+        List<String> emailsSend = new ArrayList<>();
+        Map<User, List<String>> userTitleMap = new HashMap<>();
+        for (SaveSearch saveSearch : matchPointOfInterestsToSearchCriterias) {
+            for (User user : saveSearch.getUsers()) {
+                userTitleMap.computeIfAbsent(user, k -> new ArrayList<>()).add(saveSearch.getTitle());
+            }
+        }
+        for (Map.Entry<User, List<String>> entry : userTitleMap.entrySet()) {
+            User user = entry.getKey();
+            List<String> titles = entry.getValue();
+            String recipientEmail = user.getEmail();
+            String subject = "There are updates on your Searches";
+            String emailBody = "The Titles of your searches that have been updated:\n" + String.join("\n", titles);
+
+            boolean successfullySent = sendEmail(recipientEmail, subject, emailBody);
+            if(successfullySent)
+            {
+                emailsSend.add(recipientEmail);
+            }
+        }
+        return emailsSend;
+    }
+
+    private boolean sendEmail(String RecipientEmail, String Subject, String EmailBody)
+    {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("katrinbnt@gmail.com") ;
+        message.setTo(RecipientEmail);
+        message.setSubject(Subject);
+        message.setText(EmailBody);
+        javaMailSender.send(message);
+        return true;
     }
 }
