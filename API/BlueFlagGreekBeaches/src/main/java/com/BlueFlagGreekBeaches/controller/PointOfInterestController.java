@@ -41,12 +41,12 @@ public class PointOfInterestController {
 
         // Perform the search using the extracted criteria
         List<ResponsePointOfInterest> points = pointOfInterestService.searchPointsOfInterest(start, count, text, filters);
-
+        int total = pointOfInterestService.getTotalPointsOfInterest(text, filters);
         // Build the response
         SearchResponsePoints response = new SearchResponsePoints();
         response.setStart(start);
         response.setCount(count);
-        response.setTotal(points.size());
+        response.setTotal(total);
         response.setData(points);
 
         return new ResponseEntity<>(response, HttpStatus.OK);

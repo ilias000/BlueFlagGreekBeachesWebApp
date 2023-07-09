@@ -265,8 +265,7 @@ public class ImportServiceImpl implements ImportService
     }
 
     private boolean isWithinDistance(GetPointOfInterestDto poi, int km, double lat,double lon) {
-         boolean withinDistance = false;
-        double R = 6378137; // Earth's mean radius in kilometers
+        double R = 6378137; // Earth's mean radius in meters
 
         double dLat = Math.toRadians(lat - poi.latitude());
         double dLon = Math.toRadians(lon - poi.longitude());
@@ -277,12 +276,9 @@ public class ImportServiceImpl implements ImportService
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        double d = (R * c) / 1000;// returns the distance in kilometers
-        if (d <= km)
-        {
-            withinDistance = true;
-        }
-       return withinDistance;
+        double d = R * c; // distance in meters
+
+        return d <= km * 1000; // compare distance with km (converted to meters)
     }
 
 
