@@ -3,6 +3,7 @@ package com.BlueFlagGreekBeaches.service.impl;
 import com.BlueFlagGreekBeaches.dto.pointOfInterest.ResponsePointOfInterest;
 import com.BlueFlagGreekBeaches.dto.saveSearch.AddSaveSearchDto;
 import com.BlueFlagGreekBeaches.dto.saveSearch.GetSaveSearchDto;
+import com.BlueFlagGreekBeaches.dto.saveSearch.GetUsersSaveSearchesResponseDto;
 import com.BlueFlagGreekBeaches.dto.saveSearch.SaveSearchResponseDto;
 import com.BlueFlagGreekBeaches.dto.user.GetUserDto;
 import com.BlueFlagGreekBeaches.entity.PointOfInterest;
@@ -25,14 +26,12 @@ import java.util.List;
 public class PointOfInterestServiceImpl implements PointOfInterestService {
 
     private final SaveSearchRepository saveSearchRepository;
-    private final PointOfInterestRepository pointOfInterestRepository;
     private final EntityManager entityManager;
     private final UserRepository userRepository;
 
-    public PointOfInterestServiceImpl(SaveSearchRepository saveSearchRepository, PointOfInterestRepository pointOfInterestRepository, EntityManager entityManager,
+    public PointOfInterestServiceImpl(SaveSearchRepository saveSearchRepository, EntityManager entityManager,
                                       UserRepository userRepository) {
         this.saveSearchRepository = saveSearchRepository;
-        this.pointOfInterestRepository = pointOfInterestRepository;
         this.entityManager = entityManager;
         this.userRepository = userRepository;
     }
@@ -122,6 +121,56 @@ public class PointOfInterestServiceImpl implements PointOfInterestService {
             }
             return updateUsersSaveSearch(user, existedSaveSearch, users);
         }
+    }
+
+    // Returns the save searches of a user.
+    public ResponseEntity<GetUsersSaveSearchesResponseDto> getUsersSaveSearches(String email)
+    {
+        User user = userRepository.findByEmail(email);
+        if(user == null)
+        {
+            return ResponseEntity.badRequest().body(new GetUsersSaveSearchesResponseDto(null, "User does not exist"));
+        }
+
+        List<SaveSearch> saveSearches = user.getSaveSearches();
+        List<GetSaveSearchDto> getSaveSearchDtoList = saveSearches.stream().map(s -> new GetSaveSearchDto(s.getTitle(), s.getText(), s.getKeywords(), s.getCategoryIds(), s.getLat(), s.getLon(), s.getKm(), s.getUsers().stream().map(u -> new GetUserDto(
+                u.getEmail(), u.getIsAdmin())).toList() )).toList();
+        return ResponseEntity.ok(new GetUsersSaveSearchesResponseDto( getSaveSearchDtoList, "Searches for user with email: " + user.getEmail() + " retrieved successfully"));
+    }
+
+    // Deletes a save search of a user.
+    public ResponseEntity<String> deleteSaveSearch(String email, String title)
+    {
+        User user = userRepository.findByEmail(email);
+        if(user == null)
+        {
+            return ResponseEntity.badRequest().body("User does not exist");
+        }
+
+        SaveSearch saveSearch = saveSearchRepository.findByTitle(title);
+        if(saveSearch == null)
+        {
+            return ResponseEntity.badRequest().body("Search does not exist");
+        }
+
+        List<User> users = saveSearch.getUsers();
+        if(!users.contains(user))
+        {
+            return ResponseEntity.badRequest().body("Search is not saved for user with email: " + user.getEmail());
+        }
+
+        users.remove(user);
+        if(users.isEmpty())
+        {
+            saveSearchRepository.delete(saveSearch);
+        }
+        else
+        {
+            saveSearch.setUsers(users);
+            saveSearchRepository.save(saveSearch);
+        }
+
+        return ResponseEntity.ok("Search with title: " + title + " for user with email: " + user.getEmail() + " deleted successfully");
     }
 
     private ResponseEntity<SaveSearchResponseDto> updateUsersSaveSearch(User user, SaveSearch existedSaveSearch,
