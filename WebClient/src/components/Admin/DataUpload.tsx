@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Button, Box, Typography, TextField, Divider, Snackbar, Grid } from '@mui/material';
-import MuiAlert from '@mui/material/Alert';
+import React, { useState } from "react";
+import { Button, Box, Typography, TextField, Divider, Snackbar, Grid } from "@mui/material";
+import MuiAlert from "@mui/material/Alert";
 
 const dividerStyles = {
-  backgroundColor: 'var(--primary-color)',
-  margin: '0 auto',
-  width: '100%',
+  backgroundColor: "var(--primary-color)",
+  margin: "0 auto",
+  width: "100%",
 };
 
 export default function FileUploadForm() {
@@ -28,41 +28,39 @@ export default function FileUploadForm() {
     event.preventDefault();
 
     try {
-      // If both form fields are not filled throw an error
-      if (!categories || !positions) {
-        setUploadSuccess(false);
-        throw new Error('Please fill out all required fields.')
-      }
-        
       // CATEGORIES
+      if (categories) {
+        const formDataCategories = new FormData();
+        formDataCategories.append("file", categories);
 
-      const formDataCategories = new FormData();
-      formDataCategories.append('file', categories);
+        const responseCategories = await fetch("http://localhost:8080/import/categories", {
+          method: "POST",
+          body: formDataCategories,
+        });
 
-      const responseCategories = await fetch('http://localhost:8080/import/categories', {
-        method: 'POST',
-        body: formDataCategories,
-      });
+        if (!responseCategories.ok) {
+          throw new Error("Failed to upload categories");
+        }
 
-      if (!responseCategories.ok) {
-        throw new Error('Failed to upload categories');
+        setUploadSuccess(true);
       }
 
       // POSITIONS
+      if (positions) {
+        const formDataPositions = new FormData();
+        formDataPositions.append("file", positions);
 
-      const formDataPositions = new FormData();
-      formDataPositions.append('file', positions);
+        const responsePositions = await fetch("http://localhost:8080/import/pois", {
+          method: "POST",
+          body: formDataPositions,
+        });
 
-      const responsePositions = await fetch('http://localhost:8080/import/pois', {
-        method: 'POST',
-        body: formDataPositions,
-      });
+        if (!responsePositions.ok) {
+          throw new Error("Failed to upload positions");
+        }
 
-      if (!responsePositions.ok) {
-        throw new Error('Failed to upload positions');
+        setUploadSuccess(true);
       }
-
-      setUploadSuccess(true);
     } catch (error) {
       console.error(error);
       setUploadSuccess(false);
@@ -77,37 +75,25 @@ export default function FileUploadForm() {
 
   return (
     <>
-      <Divider variant='middle' sx={dividerStyles} />
+      <Divider variant="middle" sx={dividerStyles} />
 
-      <Grid container justifyContent='center' height='100%' sx={{ mt: '2rem' }}>
+      <Grid container justifyContent="center" height="100%" sx={{ mt: "2rem" }}>
         <Grid item xs={12} sm={8} md={6}>
           <form onSubmit={handleSubmit}>
-            <Box display='flex' flexDirection='column' alignItems='center'>
+            <Box display="flex" flexDirection="column" alignItems="center">
               <Box mb={2}>
                 <label>
-                  <Typography style={{ fontSize: '1.1rem' }}>Κατηγορίες:</Typography>
+                  <Typography style={{ fontSize: "1.1rem" }}>Κατηγορίες:</Typography>
                 </label>
-                <input
-                  type='file'
-                  id='categories'
-                  name='categories'
-                  onChange={handleCategories}
-                  accept='.csv'
-                />
+                <input type="file" id="categories" name="categories" onChange={handleCategories} accept=".csv" />
               </Box>
               <Box mb={2}>
                 <label>
-                  <Typography style={{ fontSize: '1.1rem' }}>Σημεία:</Typography>
+                  <Typography style={{ fontSize: "1.1rem" }}>Σημεία:</Typography>
                 </label>
-                <input
-                  type='file'
-                  id='positions'
-                  name='positions'
-                  onChange={handlePositions}
-                  accept='.csv'
-                />
+                <input type="file" id="positions" name="positions" onChange={handlePositions} accept=".csv" />
               </Box>
-              <Button variant='contained' color='primary' type='submit'>
+              <Button variant="contained" color="primary" type="submit">
                 ΑΝΕΒΑΣΤΕ
               </Button>
             </Box>
@@ -119,15 +105,15 @@ export default function FileUploadForm() {
         open={showToast}
         autoHideDuration={4000}
         onClose={handleToastClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <MuiAlert
           onClose={handleToastClose}
-          severity={uploadSuccess ? 'success' : 'error'}
+          severity={uploadSuccess ? "success" : "error"}
           elevation={6}
-          variant='filled'
+          variant="filled"
         >
-          {uploadSuccess ? 'Τα δεδομένα ανέβηκαν επιτυχώς!' : 'Αποτυχία ανεβάσματος δεδομένων!'}
+          {uploadSuccess ? "Τα δεδομένα ανέβηκαν επιτυχώς!" : "Αποτυχία ανεβάσματος δεδομένων!"}
         </MuiAlert>
       </Snackbar>
     </>
