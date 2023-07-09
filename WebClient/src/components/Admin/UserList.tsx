@@ -33,12 +33,12 @@ const labelStyles: React.CSSProperties = {
 const rowHeight = '25px';
 
 export default function UserList() {
-
+  
   const [users, setUsers] = useState<User[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-
+  
   useEffect(() => {
     // Fetch the user list
     fetchUserList();
@@ -48,27 +48,14 @@ export default function UserList() {
     try {
       const response = await fetch('http://localhost:8080/user/all');
       const data: User[] = await response.json();
-
-      // const data = [
-      //   { email: 'user1@example.com', isAdmin: true },
-      //   { email: 'user2@example.com', isAdmin: false },
-      //   { email: 'user3@example.com', isAdmin: false },
-      //   { email: 'user4@example.com', isAdmin: false },
-      //   { email: 'user5@example.com', isAdmin: false },
-      //   { email: 'user6@example.com', isAdmin: false },
-      //   { email: 'user7@example.com', isAdmin: false },
-      //   { email: 'user8@example.com', isAdmin: false },
-      //   { email: 'user9@example.com', isAdmin: false },
-      //   { email: 'user10@example.com', isAdmin: true },
-      //   { email: 'user11@example.com', isAdmin: false },
-      //   { email: 'user12@example.com', isAdmin: false },
-      //   { email: 'user13@example.com', isAdmin: false },
-      //   { email: 'user14@example.com', isAdmin: false },
-      //   { email: 'user15@example.com', isAdmin: true },
-      // ];
-
-      // Place the admins at the top of the list
-      const sortedData = [...data].sort((a, b) => (b.isAdmin ? 1 : -1));
+      // Separate the admins from the normal users
+      const admins = data.filter(user => user.isAdmin);
+      const normalUsers = data.filter(user => !user.isAdmin);
+      // Sort each group individually
+      const sortedAdmins = admins.sort((a, b) => a.email.localeCompare(b.email));
+      const sortedNormalUsers = normalUsers.sort((a, b) => a.email.localeCompare(b.email));
+      // Combine the sorted groups
+      const sortedData = [...sortedAdmins, ...sortedNormalUsers];
       setUsers(sortedData);
     } catch (error) {
       console.error('Error fetching user list:', error);
@@ -83,9 +70,8 @@ export default function UserList() {
   
   const handleConfirmDelete = async () => {
     try {
-      console.log(userToDelete?.email)
       const responseDeleteUser = await fetch('http://localhost:8080/user/delete', {
-        method: 'POST',
+        method: 'DELETE',
         body: JSON.stringify({ 
           email: userToDelete?.email
         }),
@@ -118,17 +104,17 @@ export default function UserList() {
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
-  
+
   return (
     <>
       <TableContainer style={{ height: '90%' }}>
         <Table>
           <TableHead style={{ backgroundColor: 'var(--primary-color)' }}>
             <TableRow>
-              <TableCell align="center" sx={headCellStyles}>
+              <TableCell align='center' sx={headCellStyles}>
                 <Typography sx={labelStyles}>Χρήστης</Typography>
               </TableCell>
-              <TableCell align="center" sx={headCellStyles}>
+              <TableCell align='center' sx={headCellStyles}>
                 <Typography sx={labelStyles}>Λειτουργία</Typography>
               </TableCell>
             </TableRow>
@@ -143,10 +129,10 @@ export default function UserList() {
                   },
                 }}
               >
-                <TableCell align="center" height={rowHeight}>
+                <TableCell align='center' height={rowHeight}>
                   {user.email} {user.isAdmin && <span style={{ color: 'red' }}>(admin)</span>}
                 </TableCell>
-                <TableCell height={rowHeight} align="center">
+                <TableCell height={rowHeight} align='center'>
                   <IconButton
                     sx={{ borderRadius: '50%' }}
                     onClick={() => handleDeleteUser(user)}
@@ -163,17 +149,17 @@ export default function UserList() {
       </TableContainer>
 
       <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
+        display='flex'
+        justifyContent='center'
+        alignItems='center'
         style={{ height: '10%' }}
       >
         <Pagination
           count={Math.ceil(users.length / usersPerPage)}
           page={currentPage}
           onChange={handlePageChange}
-          shape="rounded"
-          size="large"
+          shape='rounded'
+          size='large'
         />
       </Box>
 
@@ -190,13 +176,13 @@ export default function UserList() {
             padding: 4,
           }}
         >
-          <Typography variant="body1" align="center" gutterBottom>
+          <Typography variant='body1' align='center' gutterBottom>
             Είστε βέβαιοι ότι θέλετε να διαγράψετε τον χρήστη: <br/><br/> {userToDelete?.email} ?
           </Typography>
-          <Grid container spacing={2} justifyContent="center" mt={2}>
+          <Grid container spacing={2} justifyContent='center' mt={2}>
             <Grid item>
               <Button
-                variant="outlined"
+                variant='outlined'
                 onClick={handleConfirmDelete}
               >
                 Ναι
@@ -204,7 +190,7 @@ export default function UserList() {
             </Grid>
             <Grid item>
               <Button
-                variant="contained"
+                variant='contained'
                 onClick={handleModalClose}
               >
                 Ακύρωση

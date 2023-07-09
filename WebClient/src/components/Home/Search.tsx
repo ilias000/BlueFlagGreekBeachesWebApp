@@ -71,7 +71,6 @@ export default function Search() {
           </Grid>
         </form>
       </Box>
-      <Map />
       <Footer />
     </>
   );

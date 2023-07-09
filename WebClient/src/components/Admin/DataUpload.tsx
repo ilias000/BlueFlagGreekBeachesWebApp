@@ -27,15 +27,13 @@ export default function FileUploadForm() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!categories || !positions) {
-      setUploadSuccess(false);
-      setShowToast(true);
-      console.log('Please fill in both forms');
-      return;
-    }
-
     try {
-
+      // If both form fields are not filled throw an error
+      if (!categories || !positions) {
+        setUploadSuccess(false);
+        throw new Error('Please fill out all required fields.')
+      }
+        
       // CATEGORIES
 
       const formDataCategories = new FormData();
@@ -79,22 +77,22 @@ export default function FileUploadForm() {
 
   return (
     <>
-      <Divider variant="middle" sx={dividerStyles} />
+      <Divider variant='middle' sx={dividerStyles} />
 
-      <Grid container justifyContent="center" height="100%" sx={{ mt: '2rem' }}>
+      <Grid container justifyContent='center' height='100%' sx={{ mt: '2rem' }}>
         <Grid item xs={12} sm={8} md={6}>
           <form onSubmit={handleSubmit}>
-            <Box display="flex" flexDirection="column" alignItems="center">
+            <Box display='flex' flexDirection='column' alignItems='center'>
               <Box mb={2}>
                 <label>
                   <Typography style={{ fontSize: '1.1rem' }}>Κατηγορίες:</Typography>
                 </label>
                 <input
-                  type="file"
-                  id="categories"
-                  name="categories"
+                  type='file'
+                  id='categories'
+                  name='categories'
                   onChange={handleCategories}
-                  accept=".csv"
+                  accept='.csv'
                 />
               </Box>
               <Box mb={2}>
@@ -102,14 +100,14 @@ export default function FileUploadForm() {
                   <Typography style={{ fontSize: '1.1rem' }}>Σημεία:</Typography>
                 </label>
                 <input
-                  type="file"
-                  id="positions"
-                  name="positions"
+                  type='file'
+                  id='positions'
+                  name='positions'
                   onChange={handlePositions}
-                  accept=".csv"
+                  accept='.csv'
                 />
               </Box>
-              <Button variant="contained" color="primary" type="submit">
+              <Button variant='contained' color='primary' type='submit'>
                 ΑΝΕΒΑΣΤΕ
               </Button>
             </Box>
@@ -127,7 +125,7 @@ export default function FileUploadForm() {
           onClose={handleToastClose}
           severity={uploadSuccess ? 'success' : 'error'}
           elevation={6}
-          variant="filled"
+          variant='filled'
         >
           {uploadSuccess ? 'Τα δεδομένα ανέβηκαν επιτυχώς!' : 'Αποτυχία ανεβάσματος δεδομένων!'}
         </MuiAlert>

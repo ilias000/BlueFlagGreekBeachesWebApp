@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Tab, Tabs, Typography } from '@mui/material';
 
-import Header from "../Secondary/Header";
-import Footer from "../Secondary/Footer";
-import UserList from "./UserList";
-import DataUpload from "./DataUpload";
+import Header from '../Secondary/Header';
+import Footer from '../Secondary/Footer';
+import UserList from './UserList';
+import DataUpload from './DataUpload';
 
 export default function Admin() {
 
@@ -17,7 +17,7 @@ export default function Admin() {
     <>
       <Header />
 
-      <Box sx={{ width: "60%", margin: "0 auto", marginTop: "5.5rem"}}>
+      <Box sx={{ width: '60%', margin: '0 auto', marginTop: '5.5rem'}}>
         <Tabs value={adminTab} onChange={handleAdminTab} centered 
               sx={{
                 '& .MuiTab-root': {
@@ -25,8 +25,8 @@ export default function Admin() {
                 },
                 marginBottom: '1.5rem'
               }}>
-          <Tab value='usersTab' label=" ΛΙΣΤΑ ΧΡΗΣΤΩΝ" />
-          <Tab value='dataTab' label="ΔΕΔΟΜΕΝΑ" />
+          <Tab value='usersTab' label=' ΛΙΣΤΑ ΧΡΗΣΤΩΝ' />
+          <Tab value='dataTab' label='ΔΕΔΟΜΕΝΑ' />
         </Tabs>
 
         <Box style={{ height: '90vh' }}>
