@@ -26,7 +26,9 @@ function Views() {
         {
           // render admin page for admin
           path: "/admin",
-          element: <>{AuthData.role === "admin" ? <Admin /> : <Navigate to={"/"} />}</>,
+          //element: <>{AuthData.role === "admin" ? <Admin /> : <Navigate to={"/"} />}</>,
+          // Added for testing. Remove on final version. 
+          element: <>{<Admin />}</>,
         },
         {
           // render Welcome page for guests and search page for users
