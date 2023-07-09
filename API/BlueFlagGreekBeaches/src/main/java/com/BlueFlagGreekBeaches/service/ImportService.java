@@ -13,4 +13,5 @@ public interface ImportService
 
     // Imports categories from a CSV file.
     ResponseEntity<ImportCategoryCSVResponseDto> importCategories(@RequestParam("file") MultipartFile file);
+
 }
