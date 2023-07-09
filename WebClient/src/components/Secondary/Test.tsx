@@ -23,13 +23,17 @@ function calculateDistance(lat1: any, lon1: any, lat2: any, lon2: any) {
 
 export default function Test() {
   React.useEffect(() => {
-    // Calculate distance between circle center and point
-    const distance = calculateDistance(38.1354, 23.5245, 38.1361, 24.0256);
+    const fetchData = async () => {
+      try {
+        const response = await fetch("https://localhost:8080/user/all"); // Replace with your actual API endpoint
+        const jsonData = await response.json();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
-    // Check if point is inside the circle
-    const isInsideCircle = distance <= 44;
-    console.log(isInsideCircle);
-  }, []);
+    fetchData();
+  }, []); // The empty dependency array [] ensures the effect runs only once on component mount
 
   return (
     <>

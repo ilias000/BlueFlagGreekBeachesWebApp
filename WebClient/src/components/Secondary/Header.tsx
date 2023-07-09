@@ -48,7 +48,7 @@ export default function Header() {
               <>
                 {AuthData.role === "admin" && (
                   <Grid item>
-                    <RouteButton label="Διαχείρηση" route="/admin" color="white" />
+                    <RouteButton label="Διαχείριση" route="/admin" color="white" />
                   </Grid>
                 )}
                 <Grid item>
@@ -66,10 +66,6 @@ export default function Header() {
             ) : (
               <Grid item sx={{ "@media (max-width: 600px)": { display: "none" } }}>
                 <Grid container columnGap={3} justifyContent="flex-end" alignItems="center">
-                  {/* Added for testing. Remove on final version. */}
-                  <Grid item>
-                    <RouteButton label="Διαχείρηση" route="/admin" color="white" />
-                  </Grid>
                   <Grid item>
                     <RouteButton label="Αναζήτηση" route="/search" color="white" />
                   </Grid>

@@ -4,29 +4,35 @@ import AuthContext from "../Secondary/Auth";
 import Header from "../Secondary/Header";
 import Footer from "../Secondary/Footer";
 import { Autocomplete, Box, Button, Checkbox, Grid, FormGroup, FormControlLabel, TextField } from "@mui/material";
-<<<<<<< HEAD
 import baseAxios from "../../AxiosConfig";
 import { useSearchParams } from "react-router-dom";
-=======
->>>>>>> main
 
 const inputBox = {
   width: 300,
   mt: 2,
 };
 
-const categories = [{ label: "Αθηναίων" }, { label: "Ζωγράφου" }];
+type Category = {
+  id: number;
+  name: string;
+};
 
-const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  console.log("submit");
+type Category2 = {
+  categoryId: number;
+  name: string;
+};
+
+type Pois = {
+  title: string;
+  description: string;
+  latitude: number;
+  longitude: number;
 };
 
 export default function Search() {
   const { AuthData } = React.useContext(AuthContext);
   const [searchParams, setSearchParams] = useSearchParams();
 
-<<<<<<< HEAD
   const [allCategories, setAllCategories] = React.useState<Category[]>([]);
 
   const [formData, setFormData] = React.useState<{ categories: string[]; text: string }>({
@@ -131,8 +137,6 @@ export default function Search() {
     [formData, radius, selected]
   );
 
-=======
->>>>>>> main
   return (
     <>
       <Header />
@@ -144,26 +148,19 @@ export default function Search() {
                 multiple
                 filterSelectedOptions
                 disablePortal
-<<<<<<< HEAD
                 options={allCategories.map((category: Category) => category.name)}
-=======
-                options={categories}
->>>>>>> main
                 sx={inputBox}
+                onChange={(e, value: string[]) => setFormData((prevData) => ({ ...prevData, categories: value }))}
                 renderInput={(params) => <TextField {...params} label="Κατηγορίες" />}
               />
             </Grid>
             <Grid>
-<<<<<<< HEAD
               <TextField
                 label="λέξεις-κλειδιά"
                 variant="outlined"
                 onChange={(e) => setFormData((prevData) => ({ ...prevData, text: e.target.value }))}
                 sx={inputBox}
               />
-=======
-              <TextField label="λέξεις-κλειδιά" variant="outlined" sx={inputBox} />
->>>>>>> main
             </Grid>
             <Grid>
               <Button
@@ -197,7 +194,6 @@ export default function Search() {
           </Grid>
         </form>
       </Box>
-<<<<<<< HEAD
       <Map
         selected={selected}
         setSelected={setSelected}
@@ -208,8 +204,6 @@ export default function Search() {
         setStart={setStart}
         totalPoints={totalPoints}
       />
-=======
->>>>>>> main
       <Footer />
     </>
   );
