@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService
 
         if(user.getIsAdmin())
         {
-            return ResponseEntity.badRequest().body("User with email " + deleteUserDto.email() + " is an admin and cannot be deleted.");
+            return ResponseEntity.badRequest().body("Ths user is an admin and cannot be deleted.");
         }
 
         userRepository.delete(user);
