@@ -4,7 +4,8 @@ import AuthContext from "../Secondary/Auth";
 import Header from "../Secondary/Header";
 import Footer from "../Secondary/Footer";
 import { Autocomplete, Box, Button, Checkbox, Grid, FormGroup, FormControlLabel, TextField } from "@mui/material";
-import axios from "axios";
+import baseAxios from "../../AxiosConfig";
+import { useSearchParams } from "react-router-dom";
 
 const inputBox = {
   width: 300,
@@ -30,12 +31,13 @@ type Pois = {
 
 export default function Search() {
   const { AuthData } = React.useContext(AuthContext);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [allCategories, setAllCategories] = React.useState<Category[]>([]);
 
-  const [formData, setFormData] = React.useState<{ categories: string[]; keywords: string }>({
+  const [formData, setFormData] = React.useState<{ categories: string[]; text: string }>({
     categories: [],
-    keywords: "",
+    text: "",
   });
 
   const [selected, setSelected] = React.useState<google.maps.LatLng | null>();
@@ -43,36 +45,27 @@ export default function Search() {
   const [points, setPoints] = React.useState<Pois[]>([]);
   const [start, setStart] = React.useState(0);
 
-  React.useEffect(() => {
-    // Get all categories when component is mounted
-    axios
-      .get("http://localhost:8080/category/all")
-      .then((response) => {
-        const catObjects: Category2[] = response.data;
-        const formattedObjs = catObjects.map((category: Category2) => ({
-          id: category.categoryId,
-          name: category.name,
-        }));
-        setCategories(formattedObjs);
-      })
-      .catch((error) => console.log(error));
-  }, []);
-
-  const handleSubmit = React.useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      console.log("lat: " + selected?.lat() + "\nlon: " + selected?.lng() + "\nrad meters: " + radius);
-      axios
-        .post("http://localhost:8080/pois/search", {
+  const handleRequest = React.useCallback(
+    (
+      start: number,
+      text: string | null,
+      categories: string[] | null | undefined,
+      lat: number | null | undefined,
+      lon: number | null | undefined,
+      km: number | null | undefined
+    ) => {
+      baseAxios
+        .post("pois/search", {
           start: start,
-          count: 20,
-          text: formData.keywords,
+          count: 5, // default count
+          text: text,
           filters: {
-            distance:
-              selected && radius ? { lat: selected?.lat(), lon: selected?.lng(), km: Math.round(radius / 1000) } : null,
+            distance: lat && lon && km ? { lat: lat, lon: lon, km: km } : null,
             categoryIds: categories
-              .filter((category: Category) => formData.categories.includes(category.name))
-              .map((category: Category) => category.id),
+              ? allCategories
+                  .filter((category: Category) => categories.includes(category.name))
+                  .map((category: Category) => category.id)
+              : null,
           },
         })
         .then((response) => {
@@ -81,6 +74,62 @@ export default function Search() {
           setPoints(points);
         })
         .catch((error) => console.log(error));
+    },
+    []
+  );
+
+  React.useEffect(() => {
+    // Get all categories when component is mounted
+    baseAxios
+      .get("category/all")
+      .then((response) => {
+        const catObjects: Category2[] = response.data;
+        const formattedObjs = catObjects.map((category: Category2) => ({
+          id: category.categoryId,
+          name: category.name,
+        }));
+        setAllCategories(formattedObjs);
+      })
+      .catch((error) => console.log(error));
+
+    // Read parameters to search with link at initial mount
+    // Essential paramaters
+    const strStart: string | null = searchParams.get("start");
+    const start: number | null = strStart ? parseFloat(strStart) : null;
+    const text = searchParams.get("text");
+    const categories: string[] | null | undefined = searchParams
+      .get("categories")
+      ?.split(",")
+      .map((category: string) => category.trim());
+    const strLat: string | null = searchParams.get("lat");
+    const lat: number | null = strLat ? parseFloat(strLat) : null;
+    const strLon: string | null = searchParams.get("lon");
+    const lon: number | null = strLon ? parseFloat(strLon) : null;
+    const strKm: string | null = searchParams.get("km");
+    const km: number | null = strKm ? parseFloat(strKm) : null;
+
+    // start is essential parameter to handleRequest
+    if (start !== null) {
+      handleRequest(start, text, categories, lat, lon, km);
+    }
+  }, []);
+
+  const handleSubmit = React.useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      // Make the api call
+      const km = radius ? Math.round(radius / 1000) : undefined;
+      handleRequest(start, formData.text, formData.categories, selected?.lat(), selected?.lng(), km);
+      // Set parameters to url
+      const params = {
+        start: start.toString(),
+        text: formData.text,
+        categories: formData.categories.join(","),
+        lat: selected ? selected?.lat().toString() : "",
+        lon: selected ? selected?.lng().toString() : "",
+        km: radius ? Math.round(radius / 1000).toString() : "",
+      };
+      setSearchParams(params);
     },
     [formData, radius, selected]
   );
@@ -96,7 +145,7 @@ export default function Search() {
                 multiple
                 filterSelectedOptions
                 disablePortal
-                options={categories.map((category: Category) => category.name)}
+                options={allCategories.map((category: Category) => category.name)}
                 sx={inputBox}
                 onChange={(e, value: string[]) => setFormData((prevData) => ({ ...prevData, categories: value }))}
                 renderInput={(params) => <TextField {...params} label="Κατηγορίες" />}
@@ -106,7 +155,7 @@ export default function Search() {
               <TextField
                 label="λέξεις-κλειδιά"
                 variant="outlined"
-                onChange={(e) => setFormData((prevData) => ({ ...prevData, keywords: e.target.value }))}
+                onChange={(e) => setFormData((prevData) => ({ ...prevData, text: e.target.value }))}
                 sx={inputBox}
               />
             </Grid>

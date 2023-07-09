@@ -104,7 +104,7 @@ export default function Map({ selected, setSelected, radius, setRadius, points, 
         console.error(error);
       }
     );
-  }, []);
+  }, [map]);
 
   const handleMapClick = React.useCallback(
     (e: google.maps.MapMouseEvent) => {
