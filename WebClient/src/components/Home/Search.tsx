@@ -78,7 +78,7 @@ export default function Search() {
         })
         .catch((error) => console.log(error));
     },
-    []
+    [allCategories]
   );
 
   React.useEffect(() => {
