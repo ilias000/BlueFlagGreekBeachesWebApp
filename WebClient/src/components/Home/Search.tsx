@@ -44,6 +44,7 @@ export default function Search() {
   const [radius, setRadius] = React.useState<number | undefined>();
   const [points, setPoints] = React.useState<Pois[]>([]);
   const [start, setStart] = React.useState(0);
+  const [totalPoints, setTotalPoints] = React.useState(0);
 
   const handleRequest = React.useCallback(
     (
@@ -70,6 +71,8 @@ export default function Search() {
         })
         .then((response) => {
           const data = response.data;
+          const total = data.total;
+          setTotalPoints(total);
           const points = data.data;
           setPoints(points);
         })
@@ -93,9 +96,9 @@ export default function Search() {
       .catch((error) => console.log(error));
 
     // Read parameters to search with link at initial mount
-    // Essential paramaters
-    const strStart: string | null = searchParams.get("start");
-    const start: number | null = strStart ? parseFloat(strStart) : null;
+    const url = new URL(window.location.href);
+    const strStart: string | null = url.searchParams.get("page");
+    const start: number | null = strStart ? (parseInt(strStart) - 1) * 5 : null;
     const text = searchParams.get("text");
     const categories: string[] | null | undefined = searchParams
       .get("categories")
@@ -112,22 +115,22 @@ export default function Search() {
     if (start !== null) {
       handleRequest(start, text, categories, lat, lon, km);
     }
-  }, []);
+  }, [start]);
 
   const handleSubmit = React.useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
       // Make the api call
       const km = radius ? Math.round(radius / 1000) : undefined;
-      handleRequest(start, formData.text, formData.categories, selected?.lat(), selected?.lng(), km);
+      handleRequest(0, formData.text, formData.categories, selected?.lat(), selected?.lng(), km);
       // Set parameters to url
       const params = {
-        start: start.toString(),
         text: formData.text,
         categories: formData.categories.join(","),
         lat: selected ? selected?.lat().toString() : "",
         lon: selected ? selected?.lng().toString() : "",
         km: radius ? Math.round(radius / 1000).toString() : "",
+        page: "1",
       };
       setSearchParams(params);
     },
@@ -199,6 +202,7 @@ export default function Search() {
         points={points}
         start={start}
         setStart={setStart}
+        totalPoints={totalPoints}
       />
       <Footer />
     </>

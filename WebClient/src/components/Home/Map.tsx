@@ -31,9 +31,19 @@ interface MapProps {
   points: Array<Pois>;
   start: number;
   setStart: React.Dispatch<React.SetStateAction<number>>;
+  totalPoints: number;
 }
 
-export default function Map({ selected, setSelected, radius, setRadius, points, start, setStart }: MapProps) {
+export default function Map({
+  selected,
+  setSelected,
+  radius,
+  setRadius,
+  points,
+  start,
+  setStart,
+  totalPoints,
+}: MapProps) {
   const [map, setMap] = React.useState<google.maps.Map>();
   const [circle, setCircle] = React.useState<google.maps.Circle | null>();
   const [mapLoaded, setMapLoaded] = React.useState(false);
@@ -247,7 +257,7 @@ export default function Map({ selected, setSelected, radius, setRadius, points, 
                           }}
                         >
                           <>
-                            {points.slice(start, start + 5).map((point, i) => (
+                            {points.slice(0, 5).map((point, i) => (
                               <ListItem
                                 key={i}
                                 onMouseEnter={() => setSelectedMarker(point)}
@@ -270,13 +280,20 @@ export default function Map({ selected, setSelected, radius, setRadius, points, 
                                 <ListItemText primary={point.title} secondary={point.description} />
                               </ListItem>
                             ))}
-                            {points.length / 5 > 1 && (
+                            {totalPoints / 5 > 1 && (
                               <ListItem>
                                 <Pagination
-                                  count={Math.ceil(points.length / 5)}
-                                  defaultPage={start / 5 + 1}
+                                  count={Math.ceil(totalPoints / 5)}
+                                  defaultPage={1}
                                   siblingCount={0}
-                                  onChange={(e, value) => setStart((value - 1) * 5)}
+                                  onChange={(e, value) => {
+                                    const url = new URL(window.location.href);
+                                    const searchParams = new URLSearchParams(url.search);
+                                    searchParams.set("page", value.toString());
+                                    url.search = searchParams.toString();
+                                    window.history.replaceState({}, "", url.toString());
+                                    setStart((value - 1) * 5);
+                                  }}
                                   color="primary"
                                 />
                               </ListItem>
