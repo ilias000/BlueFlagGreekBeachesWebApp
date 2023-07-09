@@ -45,7 +45,7 @@ public class PointOfInterestServiceImpl implements PointOfInterestService {
         if (filters != null) {
             if (filters.getDistance() != null) {
                 //https://aaronfrancis.com/2021/efficient-distance-querying-in-my-sql
-                queryBuilder.append ("AND  ST_Distance_Sphere(point(longitude, latitude), point(:lon,:lat )) <= :km * 1000");
+                queryBuilder.append (" AND  ST_Distance_Sphere(point(longitude, latitude), point(:lon,:lat )) <= :km * 1000");
             }
 //            if (filters.getKeywords() != null && !filters.getKeywords().isEmpty()) {
 //
@@ -98,7 +98,7 @@ public class PointOfInterestServiceImpl implements PointOfInterestService {
         }
         if (filters != null) {
             if (filters.getDistance() != null) {
-                queryBuilder.append ("AND  ST_Distance_Sphere(point(longitude, latitude), point(:lon,:lat )) <= :km * 1000");
+                queryBuilder.append (" AND  ST_Distance_Sphere(point(longitude, latitude), point(:lon,:lat )) <= :km * 1000");
             }
             if (filters.getCategoryIds() != null && !filters.getCategoryIds().isEmpty()) {
                 queryBuilder.append(" AND EXISTS (SELECT cp FROM p.categories cp WHERE cp.categoryId IN :categoryIds)");
