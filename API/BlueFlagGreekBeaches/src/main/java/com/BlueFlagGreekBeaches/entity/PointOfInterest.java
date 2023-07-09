@@ -49,7 +49,7 @@ public class PointOfInterest
     @JoinTable(name = "point_of_interest_categories",
             joinColumns = @JoinColumn(name = "point_of_interest_id"),
             inverseJoinColumns = @JoinColumn(name = "categories_id"))
-    private List<Category> categories = new ArrayList<>();
+    private List<Category> categories = new ArrayList<>();  // When using a List, Hibernate removes all entities from the junction table and inserts the remaining ones. This can cause performance issues. We can easily avoid this problem by using Set.
 
     public PointOfInterest(long timestampAdded, String title, String description, double latitude, double longitude,
                            List<String> keywords, List<Category> categories)
