@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.BlueFlagGreekBeaches.dto.user.AddUserDto;
 import com.BlueFlagGreekBeaches.dto.user.AddUserResponseDto;
+import com.BlueFlagGreekBeaches.dto.user.DeleteUserDto;
 import com.BlueFlagGreekBeaches.dto.user.GetUserDto;
 import com.BlueFlagGreekBeaches.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,8 +32,14 @@ public class UserController
         return userService.addUser(addUserDto);
     }
 
-    @GetMapping(path="/all")
+    @GetMapping("/all")
     public ResponseEntity<List<GetUserDto>> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteUser(@RequestBody DeleteUserDto deleteUserDto)
+    {
+        return userService.deleteUser(deleteUserDto);
     }
 }

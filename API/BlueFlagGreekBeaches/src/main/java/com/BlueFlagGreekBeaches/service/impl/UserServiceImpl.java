@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.BlueFlagGreekBeaches.dto.user.AddUserResponseDto;
+import com.BlueFlagGreekBeaches.dto.user.DeleteUserDto;
 import com.BlueFlagGreekBeaches.repository.UserRepository;
 import com.BlueFlagGreekBeaches.dto.user.AddUserDto;
 import com.BlueFlagGreekBeaches.dto.user.GetUserDto;
@@ -45,5 +46,20 @@ public class UserServiceImpl implements UserService
     {
         List<User> users = userRepository.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(users.stream().map(user -> new GetUserDto(user.getEmail(), user.getIsAdmin())).collect(Collectors.toList()));
+    }
+
+    // Deletes a user from the database.
+    @Override
+    public ResponseEntity<String> deleteUser(DeleteUserDto deleteUserDto)
+    {
+        User user = userRepository.findByEmail(deleteUserDto.email());
+
+        if(user == null)
+        {
+            return ResponseEntity.badRequest().body("User with email " + deleteUserDto.email() + " does not exist.");
+        }
+
+        userRepository.delete(user);
+        return ResponseEntity.ok().body("User with email " + deleteUserDto.email() + " was successfully deleted.");
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.BlueFlagGreekBeaches.dto.user.AddUserDto;
 import com.BlueFlagGreekBeaches.dto.user.AddUserResponseDto;
+import com.BlueFlagGreekBeaches.dto.user.DeleteUserDto;
 import com.BlueFlagGreekBeaches.dto.user.GetUserDto;
 import org.springframework.http.ResponseEntity;
 
@@ -15,4 +16,7 @@ public interface UserService
 
     // Returns a list of all Users in the database.
     ResponseEntity<List<GetUserDto>> getAllUsers();
+
+    // Deletes a User from the database.
+    ResponseEntity<String> deleteUser(DeleteUserDto deleteUserDto);
 }
