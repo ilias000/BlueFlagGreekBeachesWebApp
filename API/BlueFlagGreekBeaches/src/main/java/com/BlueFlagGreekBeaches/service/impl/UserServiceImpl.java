@@ -3,17 +3,20 @@ package com.BlueFlagGreekBeaches.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.BlueFlagGreekBeaches.dto.user.AddUserDto;
 import com.BlueFlagGreekBeaches.dto.user.AddUserResponseDto;
 import com.BlueFlagGreekBeaches.dto.user.DeleteUserDto;
+import com.BlueFlagGreekBeaches.dto.user.GetUserDto;
+import com.BlueFlagGreekBeaches.dto.user.LoginUserDto;
 import com.BlueFlagGreekBeaches.entity.SaveSearch;
+import com.BlueFlagGreekBeaches.entity.User;
 import com.BlueFlagGreekBeaches.repository.SaveSearchRepository;
 import com.BlueFlagGreekBeaches.repository.UserRepository;
-import com.BlueFlagGreekBeaches.dto.user.AddUserDto;
-import com.BlueFlagGreekBeaches.dto.user.GetUserDto;
-import com.BlueFlagGreekBeaches.entity.User;
+import com.BlueFlagGreekBeaches.service.TokenService;
 import com.BlueFlagGreekBeaches.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,12 +24,40 @@ public class UserServiceImpl implements UserService
 {
     private final UserRepository userRepository;
     private final SaveSearchRepository saveSearchRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
-    public UserServiceImpl(UserRepository userRepository, SaveSearchRepository saveSearchRepository)
+    public UserServiceImpl(UserRepository userRepository, SaveSearchRepository saveSearchRepository,
+                           PasswordEncoder passwordEncoder, TokenService tokenService)
     {
         this.userRepository = userRepository;
         this.saveSearchRepository = saveSearchRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenService = tokenService;
     }
+
+    // Returns a JWT token if the credentials are valid.
+    @Override
+    public ResponseEntity<String> login(LoginUserDto loginUserDto)
+    {
+        User user = userRepository.findByEmail(loginUserDto.email());
+
+        if(user == null)
+        {
+            return ResponseEntity.badRequest().body("User with email " + loginUserDto.email() + " does not exist.");
+        }
+
+        if(!passwordEncoder.matches(loginUserDto.password(), user.getPassword()))
+        {
+            System.out.println("user.getPassword(): " + user.getPassword() + " passwordEncoder.encode(loginUserDto.password()): " + passwordEncoder.encode(loginUserDto.password()));
+            return ResponseEntity.badRequest().body("Invalid password.");
+        }
+
+        String token = tokenService.generateToken(user);
+
+        return ResponseEntity.ok().body("Token: " + token);
+    }
+
 
     // Adds a new user to the database.
     @Override
@@ -37,7 +68,7 @@ public class UserServiceImpl implements UserService
             return ResponseEntity.badRequest().body(new AddUserResponseDto(null, "User already exists."));
         }
 
-        User user = new User(addUserDto.email(), addUserDto.password());
+        User user = new User(addUserDto.email(), passwordEncoder.encode(addUserDto.password()));
         User response = userRepository.save(user);
         GetUserDto getUserDto = new GetUserDto(response.getEmail(), response.getIsAdmin());
         String message = "User with email " + response.getEmail() + " was successfully added.";

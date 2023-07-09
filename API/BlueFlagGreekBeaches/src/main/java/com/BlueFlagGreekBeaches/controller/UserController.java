@@ -6,6 +6,7 @@ import com.BlueFlagGreekBeaches.dto.user.AddUserDto;
 import com.BlueFlagGreekBeaches.dto.user.AddUserResponseDto;
 import com.BlueFlagGreekBeaches.dto.user.DeleteUserDto;
 import com.BlueFlagGreekBeaches.dto.user.GetUserDto;
+import com.BlueFlagGreekBeaches.dto.user.LoginUserDto;
 import com.BlueFlagGreekBeaches.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +25,12 @@ public class UserController
     public UserController(UserService userService)
     {
         this.userService = userService;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginUserDto loginUserDto)
+    {
+        return userService.login(loginUserDto);
     }
 
     @PostMapping("/add")
