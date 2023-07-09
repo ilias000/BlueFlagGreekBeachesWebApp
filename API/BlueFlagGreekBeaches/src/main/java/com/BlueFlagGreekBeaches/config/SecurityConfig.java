@@ -49,10 +49,11 @@ public class SecurityConfig {
         return http
                 .csrf().disable() // Disable Cross-Site Request Forgery (CSRF).
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/poi/search").permitAll()
-                        .requestMatchers("/category/all").permitAll()
-                        .requestMatchers("/user/login").permitAll()
-                        .requestMatchers("/user/add").permitAll()
+                        .requestMatchers("/**").permitAll()
+                        // .requestMatchers("/poi/search").permitAll()
+                        // .requestMatchers("/category/all").permitAll()
+                        // .requestMatchers("/user/login").permitAll()
+                        // .requestMatchers("/user/add").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
