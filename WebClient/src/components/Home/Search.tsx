@@ -4,7 +4,7 @@ import AuthContext from "../Secondary/Auth";
 import Header from "../Secondary/Header";
 import Footer from "../Secondary/Footer";
 import { Autocomplete, Box, Button, Checkbox, Grid, FormGroup, FormControlLabel, TextField } from "@mui/material";
-import axios from "axios";
+// import axios from "axios";
 
 const inputBox = {
   width: 300,
@@ -43,47 +43,47 @@ export default function Search() {
   const [points, setPoints] = React.useState<Pois[]>([]);
   const [start, setStart] = React.useState(0);
 
-  React.useEffect(() => {
-    // Get all categories when component is mounted
-    axios
-      .get("http://localhost:8080/category/all")
-      .then((response) => {
-        const catObjects: Category2[] = response.data;
-        const formattedObjs = catObjects.map((category: Category2) => ({
-          id: category.categoryId,
-          name: category.name,
-        }));
-        setCategories(formattedObjs);
-      })
-      .catch((error) => console.log(error));
-  }, []);
+//   React.useEffect(() => {
+//     // Get all categories when component is mounted
+//     axios
+//       .get("http://localhost:8080/category/all")
+//       .then((response) => {
+//         const catObjects: Category2[] = response.data;
+//         const formattedObjs = catObjects.map((category: Category2) => ({
+//           id: category.categoryId,
+//           name: category.name,
+//         }));
+//         setCategories(formattedObjs);
+//       })
+//       .catch((error) => console.log(error));
+//   }, []);
 
-  const handleSubmit = React.useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      console.log("lat: " + selected?.lat() + "\nlon: " + selected?.lng() + "\nrad meters: " + radius);
-      axios
-        .post("http://localhost:8080/pois/search", {
-          start: start,
-          count: 20,
-          text: formData.keywords,
-          filters: {
-            distance:
-              selected && radius ? { lat: selected?.lat(), lon: selected?.lng(), km: Math.round(radius / 1000) } : null,
-            categoryIds: categories
-              .filter((category: Category) => formData.categories.includes(category.name))
-              .map((category: Category) => category.id),
-          },
-        })
-        .then((response) => {
-          const data = response.data;
-          const points = data.data;
-          setPoints(points);
-        })
-        .catch((error) => console.log(error));
-    },
-    [formData, radius, selected]
-  );
+//   const handleSubmit = React.useCallback(
+//     (e: React.FormEvent) => {
+//       e.preventDefault();
+//       console.log("lat: " + selected?.lat() + "\nlon: " + selected?.lng() + "\nrad meters: " + radius);
+//       axios
+//         .post("http://localhost:8080/pois/search", {
+//           start: start,
+//           count: 20,
+//           text: formData.keywords,
+//           filters: {
+//             distance:
+//               selected && radius ? { lat: selected?.lat(), lon: selected?.lng(), km: Math.round(radius / 1000) } : null,
+//             categoryIds: categories
+//               .filter((category: Category) => formData.categories.includes(category.name))
+//               .map((category: Category) => category.id),
+//           },
+//         })
+//         .then((response) => {
+//           const data = response.data;
+//           const points = data.data;
+//           setPoints(points);
+//         })
+//         .catch((error) => console.log(error));
+//     },
+//     [formData, radius, selected]
+//   );
 
   return (
     <>

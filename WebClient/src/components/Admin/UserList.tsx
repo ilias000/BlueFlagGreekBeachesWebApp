@@ -33,6 +33,7 @@ const labelStyles: React.CSSProperties = {
 const rowHeight = '25px';
 
 export default function UserList() {
+
   const [users, setUsers] = useState<User[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
@@ -74,24 +75,24 @@ export default function UserList() {
     }
   };
 
-  const usersPerPage = 10; // Number of users per page
-
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-    setCurrentPage(value);
-  };
-
+  
   const handleDeleteUser = (user: User) => {
     setUserToDelete(user);
     setShowConfirmationModal(true);
   };
-
+  
   const handleConfirmDelete = async () => {
     try {
-      const responseDeleteUser = await fetch('', {
+      console.log(userToDelete?.email)
+      const responseDeleteUser = await fetch('http://localhost:8080/user/delete', {
         method: 'POST',
-        body: JSON.stringify({ email: userToDelete!.email })
+        body: JSON.stringify({ 
+          email: userToDelete?.email
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
-
       if (!responseDeleteUser.ok) {
         throw new Error('Error deleting user');
       }
@@ -103,15 +104,21 @@ export default function UserList() {
       setShowConfirmationModal(false);  // Close the confirmation modal
     }
   };
-
+  
   const handleModalClose = () => {
     setShowConfirmationModal(false);
   };
+  
 
+  const usersPerPage = 10; // Number of users per page
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
+  
   return (
     <>
       <TableContainer style={{ height: '90%' }}>
