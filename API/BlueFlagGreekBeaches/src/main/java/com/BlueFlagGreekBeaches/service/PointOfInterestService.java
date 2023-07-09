@@ -12,4 +12,5 @@ public interface PointOfInterestService {
     List<ResponsePointOfInterest> searchPointsOfInterest(int start, int count, String text, SearchFilter filters);
 
     ResponseEntity<SaveSearchResponseDto> saveSearch(AddSaveSearchDto addSaveSearchDto, String email);
+    public int getTotalPointsOfInterest(String text, SearchFilter filters);
 }
