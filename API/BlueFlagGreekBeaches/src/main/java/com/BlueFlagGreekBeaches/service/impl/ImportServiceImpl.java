@@ -20,6 +20,7 @@ import com.BlueFlagGreekBeaches.repository.CategoryRepository;
 import com.BlueFlagGreekBeaches.repository.PointOfInterestRepository;
 import com.BlueFlagGreekBeaches.repository.SaveSearchRepository;
 import com.BlueFlagGreekBeaches.service.ImportService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,12 +34,16 @@ public class ImportServiceImpl implements ImportService
     private final PointOfInterestRepository pointOfInterestRepository;
     private final SaveSearchRepository searchRepository;
     private final JavaMailSender javaMailSender;
-    public ImportServiceImpl(CategoryRepository categoryRepository, PointOfInterestRepository pointOfInterestRepository,SaveSearchRepository searchRepository,JavaMailSender javaMailSender)
+    // Sender address: the same account the mail is sent through (spring.mail.username, set from MAIL_USERNAME).
+    private final String mailFrom;
+    public ImportServiceImpl(CategoryRepository categoryRepository, PointOfInterestRepository pointOfInterestRepository,SaveSearchRepository searchRepository,JavaMailSender javaMailSender,
+                             @Value("${spring.mail.username:}") String mailFrom)
     {
         this.categoryRepository = categoryRepository;
         this.pointOfInterestRepository = pointOfInterestRepository;
         this.searchRepository = searchRepository;
         this.javaMailSender  = javaMailSender;
+        this.mailFrom = mailFrom;
     }
 
     // Imports points of interest from a CSV file.
@@ -310,7 +315,7 @@ public class ImportServiceImpl implements ImportService
     private boolean sendEmail(String RecipientEmail, String Subject, String EmailBody)
     {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("katrinbnt@gmail.com") ;
+        message.setFrom(mailFrom);
         message.setTo(RecipientEmail);
         message.setSubject(Subject);
         message.setText(EmailBody);
