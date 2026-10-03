@@ -1,5 +1,11 @@
 package com.BlueFlagGreekBeaches.config;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -24,21 +30,35 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final RsaKeyProperties rsaKeys;
 
-    public SecurityConfig(RsaKeyProperties rsaKeys)
-    {
-        this.rsaKeys = rsaKeys;
+    /**
+     * RSA key pair used to sign and verify the JWTs.
+     * It is generated in memory every time the application starts, so no private key is ever stored in the repository.
+     * Consequence: tokens issued before a restart stop being valid and users log in again.
+     * A deployment with several instances, or one that must keep tokens across restarts, should instead load the key pair
+     * from a secret store (for example an environment variable or a mounted secret).
+     */
+    @Bean
+    KeyPair jwtKeyPair() {
+        try {
+            KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+            generator.initialize(2048);
+            return generator.generateKeyPair();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("RSA is not available in this JVM", e);
+        }
     }
 
     @Bean
-    JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(rsaKeys.publicKey()).build();
+    JwtDecoder jwtDecoder(KeyPair jwtKeyPair) {
+        return NimbusJwtDecoder.withPublicKey((RSAPublicKey) jwtKeyPair.getPublic()).build();
     }
 
     @Bean
-    JwtEncoder jwtEncoder() {
-        JWK jwk = new RSAKey.Builder(rsaKeys.publicKey()).privateKey(rsaKeys.privateKey()).build();
+    JwtEncoder jwtEncoder(KeyPair jwtKeyPair) {
+        JWK jwk = new RSAKey.Builder((RSAPublicKey) jwtKeyPair.getPublic())
+                .privateKey((RSAPrivateKey) jwtKeyPair.getPrivate())
+                .build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
