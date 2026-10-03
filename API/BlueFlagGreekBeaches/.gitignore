@@ -36,3 +36,10 @@ build/
 
 ### VS Code ###
 .vscode/
+# Build output of the VS Code / Eclipse Java tooling.
+bin/
+
+### Secrets ###
+*.pem
+*.key
+.env
